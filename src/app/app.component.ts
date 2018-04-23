@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './auth.service';
+import {
+  Router,
+  Event as RouterEvent,
+  NavigationStart,
+} from '@angular/router';
 
 @Component({
     selector: 'app-root',
@@ -8,11 +13,21 @@ import { AuthService } from './auth.service';
 })
 export class AppComponent implements OnInit {
   constructor(
+    private router: Router,
     public authService: AuthService,
   ) {
-    this.authService.refresh().catch(response => null);
+    router.events.subscribe((event: RouterEvent) => { //1
+      this.refreshToken(event);
+    });
   }
 
     ngOnInit() {
     }
+
+  private refreshToken(event: RouterEvent): void {
+    if (event instanceof NavigationStart && this.authService.isLoggedIn()) {
+      this.authService.refresh().catch(response => null);
+    }
+  }
+
 }
