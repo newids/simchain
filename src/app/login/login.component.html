@@ -1,3 +1,38 @@
+<div class="page page-login">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    class="login-form form-horizontal"
+  >  <!-- 1 -->
+    <div class="contentBox">
+      <h3 class="contentBoxTop">Login</h3>
+      <fieldset>
+        <div class="form-group" [ngClass]="{'has-error': formErrors.username}"> <!-- 2 -->
+          <label for="username" class="col-sm-3 control-label">Username</label>
+          <div class="col-sm-9">
+            <input class="form-control" type="text" formControlName="username" id="username" name="username" value=""> <!-- 3 -->
+            <span *ngIf="formErrors.username" class="help-block">{{formErrors.username}}</span>
+          </div>
+        </div>
+        <div class="form-group" [ngClass]="{'has-error': formErrors.password}">
+          <label for="password" class="col-sm-3 control-label">Password</label>
+          <div class="col-sm-9">
+            <input class="form-control" type="password" formControlName="password" id="password" name="password" value=""> <!-- 3 -->
+            <span *ngIf="formErrors.password" class="help-block">{{formErrors.password}}</span>
+          </div>
+        </div>
+      </fieldset>
+      <div *ngIf="errorResponse?.message" class="alert alert-danger">
+        {{errorResponse?.message}}
+      </div>
+    </div>
+    <div class="buttons">
+      <input class="btn btn-default" type="submit" value="Submit">
+    </div>
+  </form>
+</div>
+<!---
+
 <div class="login-page" [@routerTransition]>
     <div class="row justify-content-md-center">
         <div class="col-md-4">
@@ -20,3 +55,4 @@
         </div>
     </div>
 </div>
+--->
