@@ -1,0 +1,74 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header">
+      공개키암호(Public-key cryptosystem)
+      <a href="#desc" class="pull-right" role="button" data-toggle="collapse" title="설명"><i class="fa fa-file-text"></i></a>
+    </h1>
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+
+<div id="desc" class="desc collapse">
+  <div class="well" data-load="./load-public.html"></div>
+</div>
+<!-- / desc -->
+
+<div class="alert-dismissible">
+  <ngb-alert *ngIf="alertMessage" type="warning" (close)="alertMessage = null">{{ alertMessage }}</ngb-alert>
+</div>
+
+<legend>Key Generator</legend>
+<div class="form-group">
+  <label>Private Key</label>
+  <div class="input-group">
+    <input [(ngModel)]="privatekeyValue" type="text" id="private-key" name="private-key" class="form-control"
+           v-model="decimalKey" readonly>
+    <span class="input-group-btn">
+				<button class="btn btn-default btn-copy" type="button" data-clipboard-target="#private-key"><i
+          class="fa fa-copy"></i> Copy</button>
+      </span>
+  </div>
+</div>
+<div class="form-group">
+  <label>Public Key</label>
+  <div class="input-group">
+    <input [(ngModel)]="publickeyValue" type="text" id="public-key" name="public-key" class="form-control"
+           v-model="pubKeyDecimal" readonly>
+    <span class="input-group-btn">
+				<button class="btn btn-default btn-copy" type="button" data-clipboard-target="#public-key"><i
+          class="fa fa-copy"></i> Copy</button>
+      </span>
+  </div>
+</div>
+<div class="form-group">
+  <button type="button" class="btn btn-primary" (click)="newPrivateKey()">Generate</button>
+  <button type="button" class="btn btn-default" (click)="clear()"><i class="fa fa-trash"></i> Clear</button>
+</div>
+
+<hr>
+
+<legend>Test</legend>
+<div class="form-group">
+  <label>Input</label>
+  <textarea id="inputValue" cols="30" rows="3" class="form-control" [(ngModel)]="inputValue" name="inputValue"></textarea>
+</div>
+<div class="form-group">
+  <button type="button" class="btn btn-primary" (click)="signMessage()">Encrypt</button>
+  <button type="button" class="btn btn-primary" (click)="encPrivate()">Encrypt Private</button>
+</div>
+<div class="form-group">
+  <label>Encrypted Output</label>
+  <textarea [(ngModel)]="encryptedOutput" cols="30" rows="3" id="result" class="form-control" readonly></textarea>
+</div>
+<div class="form-group">
+  <button type="button" class="btn btn-primary" (click)="verifySignature()">Decrypt</button>
+  <button type="button" class="btn btn-primary" (click)="decPublic()">Decrypt Public</button>
+</div>
+<div class="form-group">
+  <label>Decrypted Output</label>
+  <textarea [(ngModel)]="decryptedOutput" id="result2" cols="30" rows="3" class="form-control" readonly></textarea>
+</div>
+<div class="form-group">
+  <button type="button" class="btn btn-default" (click)="clearText()"><i class="fa fa-trash"></i> Clear</button>
+</div>

@@ -1,0 +1,142 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header">
+      채굴(Mining)
+      <a href="#desc" class="pull-right" role="button" data-toggle="collapse" title="설명"><i class="fa fa-file-text"></i></a>
+    </h1>
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+
+<div id="desc" class="desc collapse">
+  <div class="well" data-load="./load-mining.html"></div>
+</div>
+<!-- / desc -->
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h4 class="panel-title">Header</h4>
+  </div>
+  <!-- / panel-header -->
+
+  <div class="panel-body">
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">version</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" v-model="block.version" readonly>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">prev hash</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" v-model="block.prev_hash" readonly>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">merkle root</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" v-model="block.merkle_root" readonly>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">time</label>
+        <div class="col-sm-5">
+          <input type="text" class="form-control" v-model="block.time" readonly>
+        </div>
+        <div class="col-sm-5">
+          <span class="form-control disabled">{{ block.time | dFormat }}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">nBits</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" v-model="block.nbits" readonly>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">nonce</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" v-model="block.nonce" readonly>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- / panel-body -->
+</div>
+<!-- / panel -->
+
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h4 class="panel-title">Transactions</h4>
+  </div>
+  <!-- / .panel-heading -->
+  <div class="panel-body">
+    <table class="table table-bordered table-striped table-hover">
+      <caption></caption>
+      <colgroup>
+        <col>
+      </colgroup>
+      <thead>
+      <tr>
+        <th scope="col">No</th>
+        <th scope="col">Hash Pointer</th>
+        <th scope="col">From</th>
+        <th scope="col">To</th>
+        <th scope="col">Amount</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-if="tx == ''">
+        <td colspan="5" class="nodata">No Data</td>
+      </tr>
+      <tr v-else v-for="(item, index) in tx">
+        <td>{{ index }}</td>
+        <td>{{ item.hash_pointer }}</td>
+        <td>{{ item.from }}</td>
+        <td>{{ item.to }}</td>
+        <td>{{ item.amount }}</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <form v-on:submit.prevent="getTx">
+      <div class="form-group">
+        <div class="input-group">
+          <input type="text" class="form-control" v-model="s" placeholder="Search...">
+          <span class="input-group-btn">
+								<button type="submit" class="btn btn-default"><i class="fa fa-search"></i> Search</button>
+							</span>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- / .panel-body -->
+</div>
+<!-- / .panel panel-info -->
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title">Proof of Work</h4>
+  </div>
+  <!-- / panel-heading -->
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-3">
+        <button type="button" class="btn btn-primary btn-block" v-on:click="miningStart">Mining Start</button>
+      </div>
+      <div class="col-sm-3">
+        <button type="button" class="btn btn-primary btn-block" v-on:click="broadcasting">Broadcasting</button>
+      </div>
+      <div class="col-sm-3">
+        <button type="button" class="btn btn-primary btn-block" v-on:click="reload">Reload</button>
+      </div>
+      <div class="col-sm-3">
+        <button type="button" class="btn btn-primary btn-block" v-on:click="autoMode">Auto Mode</button>
+      </div>
+    </div>
+    <!-- / .row -->
+  </div>
+  <!-- / .panel-body -->
+</div>

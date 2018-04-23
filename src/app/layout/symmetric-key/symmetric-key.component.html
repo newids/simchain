@@ -1,0 +1,119 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header">
+      대칭키암호(Symmetric-key cryptosystem)
+      <a href="#desc" class="pull-right" role="button" data-toggle="collapse" title="설명"><i class="fa fa-file-text"></i></a>
+    </h1>
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+
+<div id="desc" class="desc collapse">
+  <div class="well" data-load="./load-symmetric.html"></div>
+</div>
+<!-- / desc -->
+
+<div class="row">
+  <div class="col-sm-3">
+    <div class="form-group">
+      <label>Key size (bits)</label>
+      <select class="form-control" id="selKeySize" name="selKeySize" [(ngModel)]="selKeySize">
+        <option selected="selected" value="128">128</option>
+        <option value="192">192</option>
+        <option value="256">256</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="form-group">
+      <label>Mode</label>
+      <select class="form-control" id="selMode" name="selMode" [(ngModel)]="selMode">
+        <option selected="selected" value="CBC">CBC</option>
+        <option value="OFB">OFB</option>
+        <option value="CFB">CFB</option>
+        <option value="CTR">CTR</option>
+        <option value="ECB">ECB</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="form-group">
+      <label>Padding</label>
+      <select class="form-control" id="selPad" name="selPad" [(ngModel)]="selPad">
+        <option selected="selected" value="Pkcs7">Pkcs7</option>
+        <option value="Iso97971">Iso97971</option>
+        <option value="AnsiX923">AnsiX923</option>
+        <option value="Iso10126">Iso10126</option>
+        <option value="ZeroPadding">ZeroPadding</option>
+        <option value="NoPadding">NoPadding</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="form-group">
+      <label>&nbsp;</label><br>
+      <button type="reset" class="btn btn-default" (click)="clearText()"><i class="fa fa-trash"></i> Clear</button>
+    </div>
+  </div>
+</div>
+<div class="alert-dismissible">
+  <ngb-alert *ngIf="alertMessage" type="warning" (close)="alertMessage = null">{{ alertMessage }}</ngb-alert>
+</div>
+<!-- / .row -->
+<div class="form-group">
+  <label>Pass phrase</label>
+  <div class="input-group">
+    <input type="text" class="form-control" id="passphrase" name="passphrase" value="" size="70"
+           maxlength="128" [(ngModel)]="passphrase">
+    <span class="input-group-btn">
+					<button class="btn btn-default" type="button" name="random" (click)="genPassphrase()">Random</button>
+				</span>
+  </div>
+</div>
+<div class="form-group">
+  <label>Plain text</label> (length: <span id="lenPlaintext" name="lenPlaintext">{{lenPlaintext}}</span>)
+  <textarea [(ngModel)]="txtPlaintext"
+    cols="30" rows="3" class="form-control" onkeyup="Contar('txtPlaintext','lenPlaintext','{CHAR}',4);"
+            id="txtPlaintext" name="txtPlaintext" onfocus="if(this.value == _text) this.value = '';"
+            onblur="if(this.value == '') this.value = _text"></textarea>
+</div>
+<div class="form-group">
+  <button type="button" class="btn btn-primary" id="cmdEncrypt" name="cmdEncrypt" (click)="cmdEncryptClick()">Encrypt
+  </button>
+</div>
+<div class="form-group">
+  <label>Cipher text</label>
+  <textarea [(ngModel)]="txtCiphertext" cols="30" rows="3" class="form-control" id="txtCiphertext" name="txtCiphertext" readonly></textarea>
+</div>
+
+<!-- ////////////////////////// -->
+<hr>
+
+<!-- / .row -->
+<div class="form-group">
+  <label>Pass phrase</label>
+  <div class="input-group">
+    <input type="text" class="form-control" id="passphrase2" name="passphrase2" value="" type="text" size="70"
+           maxlength="128" [(ngModel)]="passphrase2">
+    <span class="input-group-btn">
+					<button class="btn btn-default" type="button" name="random" (click)="getPassphrase()">GetPass</button>
+				</span>
+  </div>
+</div>
+<div class="form-group">
+  <label>Cipher text</label> (length: <span id="lenCiphertext" name="lenCiphertext">{{lenCiphertext}}</span>)
+  <textarea [(ngModel)]="txtCiphertext2"
+            cols="30" rows="3" class="form-control" onkeyup="Contar('txtCiphertext2','lenCiphertext','{CHAR}',4);"
+            id="txtCiphertext2" name="txtCiphertext2" onfocus="if(this.value == _text) this.value = '';"
+            onblur="if(this.value == '') this.value = _text"></textarea>
+</div>
+<div class="form-group">
+  <button type="button" class="btn btn-primary" id="cmdVerify" name="cmdVerify" (click)="cmdDecryptClick()">Decrypt</button>
+	<button class="btn btn-default -align-right" type="button" name="getCiphertext" (click)="getCiphertext()">getCiphertext</button>
+</div>
+<div class="form-group">
+  <label>Plain text</label>
+  <textarea [(ngModel)]="txtPlaintext2"
+            cols="30" rows="3" class="form-control" id="txtPlaintext2" name="txtPlaintext2" readonly></textarea>
+</div>

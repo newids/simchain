@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header">
+      해쉬함수(Hash Function)
+      <a href="#desc" class="pull-right" role="button" data-toggle="collapse" title="설명"><i class="fa fa-file-text"></i></a>
+    </h1>
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+
+<div id="desc" class="desc collapse">
+  <div class="well" data-load="./load-hash.html"></div>
+</div>
+<!-- / desc -->
+
+<form>
+  <div class="form-group">
+    <label>input</label>
+    <textarea [(ngModel)]="textValue" name="textValue" id="input1" class="form-control" cols="30" rows="3"></textarea>
+  </div>
+  <div class="form-group">
+    <button type="button" class="btn btn-primary" (click)="hash()">Hash</button>
+    <button type="reset" class="btn btn-default"><i class="fa fa-trash"></i> Clear</button>
+  </div>
+  <div class="form-group">
+    <label>output</label>
+    <div class="input-group">
+      <input  [(ngModel)]="outputValue" name="outputValue"
+              [ngModelOptions]="{standalone: true}" type="text" id="output1" class="form-control">
+      <div class="input-group-append">
+						<button class="btn btn-secondary btn-copy" type="button" data-clipboard-target="#output1"><i
+              class="fa fa-copy"></i> copy</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<hr>
+
+  <div class="form-group">
+    <label>input</label>
+    <textarea id="input2" class="form-control" cols="30" rows="3" [(ngModel)]="textValue2"></textarea>
+  </div>
+  <div class="form-group">
+    <button type="button" class="btn btn-primary" (click)="hash2()">Hash</button>
+    <button type="reset" class="btn btn-default"><i class="fa fa-trash"></i> Clear</button>
+  </div>
+  <div class="form-group">
+    <label>output</label>
+    <div class="input-group">
+      <input type="text" id="output2" class="form-control" [(ngModel)]="outputValue2"
+             [ngModelOptions]="{standalone: true}">
+      <span class="input-group-btn">
+						<button class="btn btn-default btn-copy" type="button" data-clipboard-target="#output2"><i
+              class="fa fa-copy"></i> copy</button>
+					</span>
+    </div>
+  </div>
