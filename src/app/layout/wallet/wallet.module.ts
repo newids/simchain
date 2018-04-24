@@ -1,15 +1,20 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbAlertModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import {WalletRoutingModule} from './wallet-routing.module';
 import {WalletComponent} from './wallet.component';
 
 @NgModule({
   imports: [
-    CommonModule, NgbModule.forRoot(), FormsModule, WalletRoutingModule
+    CommonModule,
+    NgbModule.forRoot(),
+    NgbAlertModule.forRoot(),
+    FormsModule,
+    WalletRoutingModule
   ],
   declarations: [WalletComponent]
 })
-export class WalletModule { }
+export class WalletModule {
+}

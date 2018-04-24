@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from './auth.service';
+import {Component, OnInit} from '@angular/core';
+import {AuthService} from './interface/auth.service';
 import {
   Router,
   Event as RouterEvent,
@@ -7,22 +7,22 @@ import {
 } from '@angular/router';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     public authService: AuthService,
   ) {
-    router.events.subscribe((event: RouterEvent) => { //1
+    router.events.subscribe((event: RouterEvent) => {
       this.refreshToken(event);
     });
   }
 
-    ngOnInit() {
-    }
+  ngOnInit() {
+  }
 
   private refreshToken(event: RouterEvent): void {
     if (event instanceof NavigationStart && this.authService.isLoggedIn()) {

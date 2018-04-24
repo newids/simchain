@@ -1,4 +1,4 @@
-import {environment} from '../environments/environment';
+import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
 import {ApiResponse} from './api-response';
 import {FormGroup} from '@angular/forms';
@@ -15,7 +15,7 @@ export class UtilService {
     return Promise.reject(error);
   }
 
-  public updateFormErrors(form: FormGroup, formErrors: any, formErrorMessages: any) { //1
+  public updateFormErrors(form: FormGroup, formErrors: any, formErrorMessages: any) { // 1
     if (!form) {
       return;
     }
@@ -34,7 +34,7 @@ export class UtilService {
     }
   }
 
-  public makeAllFormFieldsDirty(form: FormGroup) { //2
+  public makeAllFormFieldsDirty(form: FormGroup) { // 2
     if (!form) {
       return;
     }

@@ -8,6 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
     styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  node_number;
+  email;
     pushRightClass: string = 'push-right';
 
     constructor(private translate: TranslateService, public router: Router) {
@@ -26,6 +28,9 @@ export class HeaderComponent implements OnInit {
                 this.toggleSidebar();
             }
         });
+
+      this.node_number = localStorage.getItem('node_number');
+      this.email = localStorage.getItem('email');
     }
 
     ngOnInit() {}
@@ -46,7 +51,11 @@ export class HeaderComponent implements OnInit {
     }
 
     onLoggedout() {
-        localStorage.removeItem('isLoggedin');
+      localStorage.removeItem('token');
+      localStorage.removeItem('node_number');
+      localStorage.removeItem('email');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('isLoggedin');
     }
 
     changeLang(language: string) {

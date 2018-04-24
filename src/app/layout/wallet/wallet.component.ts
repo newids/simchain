@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import * as bitcoin from 'bitcoinjs-lib';
 import * as bigi from 'bigi';
 import {ECPair} from 'bitcoinjs-lib';
+import {KeyService} from '../../interface/key.service';
+import {Key} from '../../interface/key.interface';
+import {Subject} from 'rxjs/Subject';
+import {debounceTime} from 'rxjs/operator/debounceTime';
 
 @Component({
   selector: 'app-wallet',
@@ -15,11 +19,18 @@ export class WalletComponent implements OnInit {
   wifValue = '';
   addressValue = '';
   keyPair: ECPair;
-  lodash: '';
-  networks: '';
-  network: '';
+  alertMessage: string = '';
+  private _alert: Subject<string>;
 
-  constructor() {
+  alert() {
+    this._alert.subscribe((message) => this.alertMessage = message);
+    debounceTime.call(this._alert, 5000).subscribe(() => this.alertMessage = null);
+  }
+
+  constructor(
+    private keyService: KeyService
+  ) {
+    this._alert = new Subject<string>();
   }
 
   ngOnInit() {
@@ -42,16 +53,49 @@ export class WalletComponent implements OnInit {
       console.log('compAddress', keyForCompressed.getAddress());
       console.log('compPrivateKey', keyForCompressed.d.toHex());
     } catch (e) {
+      this._alert.next(`Error: ${new Date()} - ${e.toLocaleString()}`);
+      this.alert();
       console.log('error:', e.toLocaleString());
     }
   }
 
   registerKey() {
     try {
-      this.addressValue;
+      const key = {
+        'private_key': this.keyPair.d.toHex(),
+        'public_key': this.publicKeyValue,
+        'wif': this.wifValue,
+        'wif_compressed': this.wifCompValue,
+        'address': this.addressValue,
+        'node_number': localStorage.getItem('node_number'),
+        'amount': 0
+      };
+      this.keyService.create(key as Key)
+        .then(data => {
+          this._alert.next('저장되었습니다.');
+          this.alert();
+          console.log('Key saved.');
+        })
+        .catch(response => {
+          this._alert.next(`Error: ${new Date()} - ${response.errors}`);
+          this.alert();
+          console.log('Key save fail.');
+        });
     } catch (e) {
+      this._alert.next(`Error: ${new Date()} - ${e.toLocaleString()}`);
+      this.alert();
       console.log('error:', e.toLocaleString());
     }
-
   }
+
+  clearForm() {
+    this.privateKeyValue = '';
+    this.publicKeyValue = '';
+    this.wifCompValue = '';
+    this.wifValue = '';
+    this.addressValue = '';
+    this.keyPair = null;
+    this.alertMessage = null;
+  }
+
 }

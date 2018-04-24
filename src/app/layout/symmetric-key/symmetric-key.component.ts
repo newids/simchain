@@ -23,6 +23,11 @@ export class SymmetricKeyComponent implements OnInit {
   alertMessage: string;
   private _alert = new Subject<string>();
 
+  alert() {
+    this._alert.subscribe((message) => this.alertMessage = message);
+    debounceTime.call(this._alert, 5000).subscribe(() => this.alertMessage = null);
+  }
+
   constructor() {
   }
 
@@ -47,6 +52,7 @@ export class SymmetricKeyComponent implements OnInit {
       this.passphrase = b;
     } catch (a) {
       this._alert.next(`${new Date()} - Error: Fail to generate pass phrase.`);
+      this.alert();
       return -1;
     }
   }
@@ -96,8 +102,4 @@ export class SymmetricKeyComponent implements OnInit {
     this.txtCiphertext2 = '';
   }
 
-  alert() {
-    this._alert.subscribe((message) => this.alertMessage = message);
-    debounceTime.call(this._alert, 5000).subscribe(() => this.alertMessage = null);
-  }
 }

@@ -14,39 +14,59 @@
 </div>
 <!-- / desc -->
 
-<form v-on:submit.prevent="broadcasting">
-  <div class="form-group">
-    <label>From</label>
-    <input type="text" class="form-control" v-model="from">
+<div class="form-group">
+  <label>From</label>
+  <div class="input-group">
+    <input type="text" class="form-control" [(ngModel)]="from" name="from">
+    <span class="input-group-btn">
+				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#private-key"><i
+          class="fa fa-paste"></i> Paste</button>
+    </span>
   </div>
-  <div class="form-group">
-    <label>To</label>
-    <input type="text" class="form-control" v-model="to">
+</div>
+<div class="form-group">
+  <label>To</label>
+  <div class="input-group">
+    <input type="text" class="form-control" [(ngModel)]="to" name="to">
+    <span class="input-group-btn">
+				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#private-key"><i
+          class="fa fa-paste"></i> Paste</button>
+    </span>
   </div>
-  <div class="form-group">
-    <label>Amount</label>
-    <input type="text" class="form-control" v-model="amount">
+</div>
+<div class="form-group">
+  <label>Amount</label>
+  <input type="text" class="form-control" [(ngModel)]="amount" name="amount">
+</div>
+<div class="form-group">
+  <button type="button" class="btn btn-primary" (click)="generator">Generator</button>
+</div>
+<div class="form-group">
+  <label>Data</label>
+  <textarea cols="30" rows="3" class="form-control" [(ngModel)]="jsonData" readonly></textarea>
+</div>
+<div class="form-group">
+  <label>Key</label>
+  <div class="input-group">
+    <input type="text" class="form-control" [(ngModel)]="key">
+    <span class="input-group-btn">
+				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#private-key"><i
+          class="fa fa-paste"></i> Paste</button>
+    </span>
   </div>
-  <div class="form-group">
-    <button type="button" class="btn btn-primary" v-on:click="generator">Generator</button>
-  </div>
-  <div class="form-group">
-    <label>Data</label>
-    <textarea cols="30" rows="3" class="form-control" v-model="jsonData" readonly></textarea>
-  </div>
-  <div class="form-group">
-    <label>Key</label>
-    <input type="text" class="form-control" v-model="key">
-  </div>
-  <div class="form-group">
-    <button type="button" class="btn btn-primary" v-on:click="sign">Sign</button>
-  </div>
-  <div class="form-group">
-    <label>Tx</label>
-    <textarea cols="30" rows="3" class="form-control" v-model="tx" readonly></textarea>
-  </div>
-  <div class="form-group">
-    <button type="submit" class="btn btn-primary">Broadcasting</button>
-    <button type="button" class="btn btn-default" v-on:click="clearForm"><i class="fa fa-trash"></i> Clear</button>
-  </div>
-</form>
+</div>
+<div class="form-group">
+  <button type="button" class="btn btn-primary" (click)="sign()">Sign</button>
+</div>
+<div class="form-group">
+  <label>Signature</label>
+  <textarea cols="30" rows="3" class="form-control" [(ngModel)]="tx" readonly></textarea>
+</div>
+<div class="form-group">
+  <button type="submit" class="btn btn-primary" (click)="broardcasting()">Broadcasting</button>
+  <button type="button" class="btn btn-default" (click)="clearForm()"><i class="fa fa-trash"></i> Clear</button>
+</div>
+
+<div class="alert-dismissible">
+  <ngb-alert *ngIf="alertMessage" type="warning" (close)="alertMessage = null">{{ alertMessage }}</ngb-alert>
+</div>
