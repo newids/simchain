@@ -1,5 +1,8 @@
 <div class="row">
-  <button class="btn btn-default" (click)="open(content)">{{title}}</button>
+  <!--<button class="btn btn-default" (click)="open(content)">{{title}}</button>-->
+  <!--<a class="dropdown-item" href="javascript:void(0)" (click)="open(content)">-->
+    <div (click)="open(content)"> <i class="fa fa-fw fa-user"></i> {{ 'Profile' | translate }}</div>
+  <!--</a>-->
   <ng-template #content let-c="close" let-d="dismiss">
     <div class="modal-content modal-lg">
       <div class="modal-header">

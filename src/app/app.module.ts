@@ -17,6 +17,7 @@ import {UtilService} from './interface/util.service'; // 2
 import {AuthService} from './interface/auth.service'; // 3
 import {RequestInterceptor} from './interface/request-interceptor.service';
 import {KeyService} from './interface/key.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 // AoT requires an exported function for factories
 export function createTranslateLoader(http: HttpClient) {

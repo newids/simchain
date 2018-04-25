@@ -2,7 +2,11 @@ import {Component, Input, OnChanges, SimpleChange} from '@angular/core';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 import {Transaction} from '../transaction/transaction.interface';
 import {Key} from '../../interface/key.interface';
+import {KeyService} from '../../interface/key.service';
 import {Block} from '../mining/block.interface';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {forEach} from '@angular/router/src/utils/collection';
+import {element} from 'protractor';
 
 @Component({
   selector: 'app-pop-user',
@@ -12,9 +16,10 @@ import {Block} from '../mining/block.interface';
 export class PopUserComponent implements OnChanges {
   closeResult: string;
   private _node_number: string;
-  email: string;
+  @Input() email: string;
   transaction: Transaction;
   key: Key;
+  keyList: Key[];
 
   @Input()
   set node_number(node_number: string) {
@@ -26,7 +31,7 @@ export class PopUserComponent implements OnChanges {
     return this._node_number;
   }
 
-  constructor(private modalService: NgbModal) {
+  constructor(public modalService: NgbModal, private keyService: KeyService) {
   }
 
   ngOnInit() {
@@ -47,15 +52,38 @@ export class PopUserComponent implements OnChanges {
     });
   }
 
+  // https://angular.io/guide/component-interaction
   ngOnChanges(changes: { [node_number: string]: SimpleChange }) {
-    for (let propName in changes) {
-      let changedProp = changes[propName];
+    for (const propName in changes) {
+      const changedProp = changes[propName];
+      const to = JSON.stringify(changedProp.currentValue);
+      if (changedProp.isFirstChange()) {
+        console.log(`Initial value of ${propName} set to ${to}`);
+      } else {
+        const from = JSON.stringify(changedProp.previousValue);
+        console.log(`${propName} changed from ${from} to ${to}`);
+      }
+
       this._node_number = JSON.stringify(changedProp.currentValue).toString();
 
-
-      console.log('this._node_number:', this._node_number);
-      console.log('this.email:', this.email);
+      this.keyService.get_key_node(this._node_number)
+        .then(data => {
+          this.keyList = data;
+          console.log('Key : ', this.keyList);
+        });
     }
+
+
+    console.log('this._node_number:', this._node_number);
+    console.log('this.email:', this.email);
+
+    // https://stackoverflow.com/questions/39464345/best-practice-for-calling-the-ngbmodal-open-method
+    // https://alligator.io/angular/viewchild-access-component/
+    // https://stackoverflow.com/questions/38974896/call-child-component-method-from-parent-class-angular
+    //
+    //
+    //
+    //
     // for (let propName in changes) {
     //   let changedProp = changes[propName];
     //   let to = JSON.stringify(changedProp.currentValue);

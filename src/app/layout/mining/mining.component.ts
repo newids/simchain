@@ -15,6 +15,10 @@ export class MiningComponent implements OnInit {
   index = '';
   timestamp = '';
 
+
+  // https://angular.io/guide/lifecycle-hooks#onchanges
+
+
   constructor() {
   }
 

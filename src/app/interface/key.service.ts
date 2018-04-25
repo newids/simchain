@@ -29,12 +29,12 @@ export class KeyService {
       .catch(this.utilService.handleApiError);
   }
 
-  show(keyname: string): Promise<Key> {
-    return this.http.get<ApiResponse>(`${this.apiBaseUrl}/${keyname}`)
+  get_key_node(node_number: string): Promise<Key[]> {
+    return this.http.get<ApiResponse>(`${this.apiBaseUrl}/node/${node_number}`)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
-        return response.data as Key;
+        return response.data as Key[];
       })
       .catch(this.utilService.handleApiError);
   }
