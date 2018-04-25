@@ -21,47 +21,45 @@
   <!-- / panel-header -->
 
   <div class="panel-body">
-    <form class="form-horizontal">
-      <div class="form-group">
+      <div class="row form-group">
         <label class="col-sm-2 control-label">version</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" v-model="block.version" readonly>
+          <input type="text" class="form-control" value="02000000" readonly name="version">
         </div>
       </div>
-      <div class="form-group">
+      <div class="row form-group">
         <label class="col-sm-2 control-label">prev hash</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" v-model="block.prev_hash" readonly>
+          <input type="text" class="form-control" [(ngModel)]="block.prev_hash" readonly name="prev_hash">
         </div>
       </div>
-      <div class="form-group">
+      <div class="row form-group">
         <label class="col-sm-2 control-label">merkle root</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" v-model="block.merkle_root" readonly>
+          <input type="text" class="form-control" [(ngModel)]="block.merkle_root" readonly name="merkle_root">
         </div>
       </div>
-      <div class="form-group">
+      <div class="row form-group">
         <label class="col-sm-2 control-label">time</label>
         <div class="col-sm-5">
-          <input type="text" class="form-control" v-model="block.time" readonly>
+          <input type="text" class="form-control" [(ngModel)]="block.time" readonly name="time">
         </div>
         <div class="col-sm-5">
-          <span class="form-control disabled">{{ block.time | dFormat }}</span>
+          <input type="text" class="form-control" [(ngModel)]="timestamp" readonly name="timestamp">
         </div>
       </div>
-      <div class="form-group">
+      <div class="row form-group">
         <label class="col-sm-2 control-label">nBits</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" v-model="block.nbits" readonly>
+          <input type="text" class="form-control" [(ngModel)]="block.nbits" readonly name="nbits">
         </div>
       </div>
-      <div class="form-group">
+      <div class="row form-group">
         <label class="col-sm-2 control-label">nonce</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" v-model="block.nonce" readonly>
+          <input type="text" class="form-control" [(ngModel)]="block.nonce" name="nonce" readonly>
         </div>
       </div>
-    </form>
   </div>
   <!-- / panel-body -->
 </div>
@@ -93,24 +91,22 @@
       </tr>
       <tr v-else v-for="(item, index) in tx">
         <td>{{ index }}</td>
-        <td>{{ item.hash_pointer }}</td>
-        <td>{{ item.from }}</td>
-        <td>{{ item.to }}</td>
-        <td>{{ item.amount }}</td>
+        <td>{{ transaction.hash_pointer }}</td>
+        <td>{{ transaction.from }}</td>
+        <td>{{ transaction.to }}</td>
+        <td>{{ transaction.amount }}</td>
       </tr>
       </tbody>
     </table>
 
-    <form v-on:submit.prevent="getTx">
       <div class="form-group">
         <div class="input-group">
-          <input type="text" class="form-control" v-model="s" placeholder="Search...">
+          <input type="text" class="form-control" [(ngModel)]="s" placeholder="Search...">
           <span class="input-group-btn">
 								<button type="submit" class="btn btn-default"><i class="fa fa-search"></i> Search</button>
 							</span>
         </div>
       </div>
-    </form>
   </div>
   <!-- / .panel-body -->
 </div>
@@ -124,16 +120,16 @@
   <div class="panel-body">
     <div class="row">
       <div class="col-sm-3">
-        <button type="button" class="btn btn-primary btn-block" v-on:click="miningStart">Mining Start</button>
+        <button type="button" class="btn btn-primary btn-block" (click)="miningStart">Mining Start</button>
       </div>
       <div class="col-sm-3">
-        <button type="button" class="btn btn-primary btn-block" v-on:click="broadcasting">Broadcasting</button>
+        <button type="button" class="btn btn-primary btn-block" (click)="broadcasting">Broadcasting</button>
       </div>
       <div class="col-sm-3">
-        <button type="button" class="btn btn-primary btn-block" v-on:click="reload">Reload</button>
+        <button type="button" class="btn btn-primary btn-block" (click)="reload">Reload</button>
       </div>
       <div class="col-sm-3">
-        <button type="button" class="btn btn-primary btn-block" v-on:click="autoMode">Auto Mode</button>
+        <button type="button" class="btn btn-primary btn-block" (click)="autoMode">Auto Mode</button>
       </div>
     </div>
     <!-- / .row -->

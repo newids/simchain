@@ -1,6 +1,6 @@
-// src/app/user.interface.ts
+// src/app/interface/user.interface.ts
 
-export interface User {
+export class User {
   _id: string;
   email: string;
   node_number: string;
@@ -9,4 +9,9 @@ export interface User {
   nbits: string;
   status: string;
   balance: number;
+
+  constructor(values: Object = {}) {
+    Object.assign(this, values);
+  }
+
 }

@@ -7,7 +7,7 @@ import {LayoutRoutingModule} from './layout-routing.module';
 import {LayoutComponent} from './layout.component';
 import {SidebarComponent} from './components/sidebar/sidebar.component';
 import {HeaderComponent} from './components/header/header.component';
-import {ModalComponent} from './bs-component/components/';
+import {PopUserComponent} from './pop-user/pop-user.component';
 
 @NgModule({
   imports: [
@@ -17,7 +17,7 @@ import {ModalComponent} from './bs-component/components/';
     NgbModule.forRoot(),
     NgbDropdownModule.forRoot()
   ],
-  declarations: [LayoutComponent, SidebarComponent, HeaderComponent, ModalComponent]
+  declarations: [LayoutComponent, SidebarComponent, HeaderComponent, PopUserComponent]
 })
 export class LayoutModule {
 }

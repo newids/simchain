@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {Block} from './block.interface';
+import {Transaction} from '../transaction/transaction.interface';
+
 
 @Component({
   selector: 'app-mining',
@@ -7,9 +10,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MiningComponent implements OnInit {
 
-  constructor() { }
+  block: Block;
+  transaction: Transaction;
+  index = '';
+  timestamp = '';
+
+  constructor() {
+  }
 
   ngOnInit() {
+    this.block = new Block({
+      _id: '0', prev_hash: '0',
+    });
+
+    this.transaction = new Transaction({
+      _id: '0',
+    });
   }
 
 }

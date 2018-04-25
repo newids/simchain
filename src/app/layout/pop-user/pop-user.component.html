@@ -1,3 +1,101 @@
-<p>
-  pop-user works!
-</p>
+<div class="row">
+  <button class="btn btn-default" (click)="open(content)">{{title}}</button>
+  <ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h4 class="modal-title">User Information</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+          <span aria-hidden="true">x</span>
+        </button>
+      </div>
+
+      <!-- modal-body -->
+      <div class="modal-body">
+        <div class="col-sm-12">
+          <div class="row breadcrumb">
+            <div class="col-sm-6"><b>Node Number:</b> <span class="text-primary">{{ node_number }}</span></div>
+            <div class="col-sm-6"><b>User E-mail:</b> <span class="text-primary">{{ email }}</span></div>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <h4 class="panel-title">User Wallets</h4>
+          <table class="table table-bordered table-striped table-hover">
+            <caption></caption>
+            <colgroup>
+              <col>
+            </colgroup>
+            <thead>
+            <tr>
+              <th class="col-sm-8" scope="col">Address</th>
+              <th class="col-sm-8" scope="col">Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-if="key == ''">
+              <td class="nodata" colspan="2">No Data</td>
+            </tr>
+            <tr v-else v-for="item in key">
+              <td class="col-sm-8">{{ key.address }}</td>
+              <td class="col-sm-8">{{ key.amount }}</td>
+            </tr>
+            </tbody>
+          </table>
+          <h4 class="panel-title">Wallet Transactions</h4>
+          <table class="table table-bordered table-striped table-hover">
+            <caption></caption>
+            <colgroup>
+              <col>
+            </colgroup>
+            <thead>
+            <tr>
+              <th scope="col">No</th>
+              <th scope="col">Time</th>
+              <th scope="col">To</th>
+              <th scope="col">Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-if="transactions == ''">
+              <td class="nodata" colspan="5">No Data</td>
+            </tr>
+            <tr v-else v-for="item in transactions">
+              <td>{{ transaction._id }}</td>
+              <td>{{ transaction.created_date }}</td>
+              <td>{{ transaction.from }}</td>
+              <td>{{ transaction.to }}</td>
+              <td>{{ transaction.amount }}</td>
+            </tr>
+            </tbody>
+          </table>
+          <div class="form-group">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search...">
+              <span class="input-group-btn">
+                <button class="btn btn-default"><i class="fa fa-search"></i> Search</button>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="wrap-btn col-sm-12" v-if="nodeNum == '0001'">
+          <div class="row">
+            <div class="col-sm-4">
+            <button class="btn btn-primary btn-block">Reset Password</button>
+          </div>
+            <div class="col-sm-4">
+              <button class="btn btn-primary btn-block">Delete User Data</button>
+            </div>
+            <div class="col-sm-4">
+              <button class="btn btn-primary btn-block">Delete User Account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- modal-body -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="c('Close click')">Close</button>
+      </div>
+    </div>
+  </ng-template>
+</div>
