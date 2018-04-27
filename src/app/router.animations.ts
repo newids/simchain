@@ -1,8 +1,27 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
 export function routerTransition() {
+  // return fadeInAnimation;
     return slideToTop();
 }
+
+
+// http://jasonwatmore.com/post/2017/04/19/angular-2-4-router-animation-tutorial-example
+export const fadeInAnimation =
+  // trigger name for attaching this animation to an element using the [@triggerName] syntax
+  trigger('fadeInAnimation', [
+
+    // route 'enter' transition
+    transition(':enter', [
+
+      // css styles at start of transition
+      style({ opacity: 0 }),
+
+      // animation and styles at end of transition
+      animate('.3s', style({ opacity: 1 }))
+    ]),
+  ]);
+
 
 export function slideToRight() {
     return trigger('routerTransition', [

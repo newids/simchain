@@ -78,4 +78,8 @@ export class SidebarComponent implements OnInit{
     localStorage.removeItem('isLoggedin');
   }
 
+  open() {
+    this.child.open(this.child.content, this.node_number, this.email);
+  }
+
 }

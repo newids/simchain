@@ -27,6 +27,7 @@
     "@ng-bootstrap/ng-bootstrap": "^1.1.0",
     "@ngx-translate/core": "^9.1.1",
     "@ngx-translate/http-loader": "^2.0.1",
+    "@swimlane/ngx-datatable": "^11.3.2",
     "@types/bitcoinjs-lib": "^3.3.3",
     "@types/decimal.js": "^7.4.0",
     "@types/node-rsa": "^0.4.3",

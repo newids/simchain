@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, Input} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Router, NavigationEnd} from '@angular/router';
 import {TranslateService} from '@ngx-translate/core';
 import {PopUserComponent} from '../../pop-user/pop-user.component';
@@ -9,13 +9,13 @@ import {PopUserComponent} from '../../pop-user/pop-user.component';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  pushRightClass = 'push-right';
+
   @ViewChild(PopUserComponent) child: PopUserComponent;
   node_number;
   email;
-  pushRightClass = 'push-right';
 
   constructor(private translate: TranslateService, public router: Router) {
-
     this.translate.addLangs(['en', 'fr', 'ur', 'es', 'it', 'fa', 'de', 'zh-CHS']);
     this.translate.setDefaultLang('en');
     const browserLang = this.translate.getBrowserLang();
@@ -30,7 +30,6 @@ export class HeaderComponent implements OnInit {
         this.toggleSidebar();
       }
     });
-
   }
 
   ngOnInit() {
@@ -64,6 +63,33 @@ export class HeaderComponent implements OnInit {
   changeLang(language: string) {
     this.translate.use(language);
   }
+
+  open() {
+    this.child.open(this.child.content, this.node_number, this.email);
+  }
+
+
+  // updateFilter(event) {
+  //   const val = event.target.value.toLowerCase();
+  //
+  //   // filter our data
+  //   const temp = this.temp.filter(function(d) {
+  //     return d.name.toLowerCase().indexOf(val) !== -1 || !val;
+  //   });
+  //
+  //   // update the rows
+  //   this.rows = temp;
+  //   // Whenever the filter changes, always go back to the first page
+  //   this.table.offset = 0;
+  // }
+
+
+
+
+
+
+
+
 
   // onProfileClick() {
   //   const modalRef = this.modalService.open(NgbdModalContent);

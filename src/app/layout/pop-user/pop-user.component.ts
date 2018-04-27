@@ -1,35 +1,52 @@
-import {Component, Input, OnChanges, SimpleChange} from '@angular/core';
+import {Component, Input, Output, OnChanges, OnInit, SimpleChange, ViewChild} from '@angular/core';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 import {Transaction} from '../transaction/transaction.interface';
 import {Key} from '../../interface/key.interface';
 import {KeyService} from '../../interface/key.service';
-import {Block} from '../mining/block.interface';
-import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {forEach} from '@angular/router/src/utils/collection';
-import {element} from 'protractor';
+import {DatatableComponent} from '@swimlane/ngx-datatable';
+import {DetailviewComponent} from '../detailview/detailview.component';
 
 @Component({
   selector: 'app-pop-user',
   templateUrl: './pop-user.component.html',
-  styleUrls: ['./pop-user.component.css']
+  styleUrls: ['./pop-user.component.scss']
 })
-export class PopUserComponent implements OnChanges {
+export class PopUserComponent implements OnInit {
   closeResult: string;
-  private _node_number: string;
-  @Input() email: string;
+  @Input() node_number: string;
+  email: string;
   transaction: Transaction;
   key: Key;
   keyList: Key[];
+  columns_key = [];
 
-  @Input()
-  set node_number(node_number: string) {
-    this._node_number = (node_number && node_number.trim()) || '<no node_number set>';
-    this.email = localStorage.getItem('email');
-  }
+  @ViewChild('content') content: any;
 
-  get node_number(): string {
-    return this._node_number;
-  }
+  // https://ng-bootstrap.github.io/#/components/modal/examples
+  @ViewChild(DetailviewComponent) child: DetailviewComponent;
+
+  rows = [];
+
+  columns = [
+    { prop: 'address' },
+    { name: 'amount' }
+  ];
+
+  rows2 = [];
+  temp2 = [];
+
+  columns2 = [
+    { prop: 'time' },
+    { name: 'from' },
+    { name: 'to' },
+    { name: 'amount' },
+  ];
+
+  detail_view_title: string;
+  detail_view_content: string;
+
+  // https://swimlane.gitbook.io/ngx-datatable/api/column/inputs
+  @ViewChild(DatatableComponent) table: DatatableComponent;
 
   constructor(public modalService: NgbModal, private keyService: KeyService) {
   }
@@ -42,68 +59,106 @@ export class PopUserComponent implements OnChanges {
     this.transaction = new Transaction({
       _id: '0',
     });
+    console.log('ngOnInit');
   }
 
-  open(content) {
+  fetch(cb) {
+    this.keyService.get_key_node(this.node_number)
+      .then(data => {
+        // TODO: data.forEach(element => {
+        //   this.columns_key.push(`{ address: ${element.address}, balance:${element.amount} }`);
+        cb(data);
+
+        console.log('set node_number(node_number: string) Key : ', this.columns_key);
+      });
+  }
+
+  // fetch2(cb) {
+  //   this.transactionService.get_tr_node(this.node_number)
+  //     .then(data => {
+  //       // TODO: data.forEach(element => {
+  //       //   this.columns_key.push(`{ address: ${element.address}, balance:${element.amount} }`);
+  //       cb(data);
+  //
+  //       console.log('set node_number(node_number: string) Key : ', this.columns_key);
+  //     });
+  // }
+
+  open(content, node, mail) {
+    this.node_number = node;
+    this.email = mail;
+
+    this.fetch((data) => {
+      // cache our list
+      this.keyList = [...data];
+
+      // push our inital complete list
+      this.rows = data;
+    });
+
+    console.log('open(content) 1');
     this.modalService.open(content, {size: 'lg', backdrop: 'static'}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
-  }
-
-  // https://angular.io/guide/component-interaction
-  ngOnChanges(changes: { [node_number: string]: SimpleChange }) {
-    for (const propName in changes) {
-      const changedProp = changes[propName];
-      const to = JSON.stringify(changedProp.currentValue);
-      if (changedProp.isFirstChange()) {
-        console.log(`Initial value of ${propName} set to ${to}`);
-      } else {
-        const from = JSON.stringify(changedProp.previousValue);
-        console.log(`${propName} changed from ${from} to ${to}`);
-      }
-
-      this._node_number = JSON.stringify(changedProp.currentValue).toString();
-
-      this.keyService.get_key_node(this._node_number)
-        .then(data => {
-          this.keyList = data;
-          console.log('Key : ', this.keyList);
-        });
-    }
-
-
-    console.log('this._node_number:', this._node_number);
-    console.log('this.email:', this.email);
-
-    // https://stackoverflow.com/questions/39464345/best-practice-for-calling-the-ngbmodal-open-method
-    // https://alligator.io/angular/viewchild-access-component/
-    // https://stackoverflow.com/questions/38974896/call-child-component-method-from-parent-class-angular
-    //
-    //
-    //
-    //
-    // for (let propName in changes) {
-    //   let changedProp = changes[propName];
-    //   let to = JSON.stringify(changedProp.currentValue);
-    //   if (changedProp.isFirstChange()) {
-    //     log.push(`Initial value of ${propName} set to ${to}`);
-    //   } else {
-    //     let from = JSON.stringify(changedProp.previousValue);
-    //     log.push(`${propName} changed from ${from} to ${to}`);
-    //   }
-    //   this.changeLog.push(log.join(', '));
-    // }
+    console.log('open(content) 2');
   }
 
   private getDismissReason(reason: any): string {
+    console.log('getDismissReason');
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
     } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
       return 'by clicking on a backdrop';
     } else {
       return `with: ${reason}`;
+    }
+  }
+
+  updateFilter(event) {
+    const val = event.target.value.toLowerCase();
+
+    // filter our data
+    const temp = this.keyList.filter(function(d) {
+      return d.address.toLowerCase().indexOf(val) !== -1 || !val;
+    });
+
+    // update the rows
+    this.rows = temp;
+    // Whenever the filter changes, always go back to the first page
+    this.table.offset = 0;
+  }
+
+  updateFilter2(event) {
+    const val = event.target.value.toLowerCase();
+
+    // filter our data
+    const temp = this.keyList.filter(function(d) {
+      return d.address.toLowerCase().indexOf(val) !== -1 || !val;
+    });
+
+    // update the rows
+    this.rows = temp;
+    // Whenever the filter changes, always go back to the first page
+    this.table.offset = 0;
+  }
+
+  onActivate(event) {
+    if (event.type === 'click') {
+      console.log('onActivate(event) : ', event);
+      console.log('event.row.address : ', event.row.address);
+
+      this.detail_view_title = 'Wallet Detail';
+      this.detail_view_content = `
+    address : ${event.row.address}
+ public key : ${event.row.public_key}
+private key : ${event.row.private_key}
+        wif : ${event.row.wif}
+    balance : ${event.row.amount}`;
+
+      this.child.open(this.child.content, this.detail_view_title, this.detail_view_content);
+
     }
   }
 }

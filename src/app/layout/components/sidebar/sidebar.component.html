@@ -39,8 +39,8 @@
         <li class="nested" [class.expand]="showMenu === 'profile'">
           <ul class="submenu">
             <li>
-              <a href="javascript:void(0)">
-                <app-pop-user [node_number]="node_number"></app-pop-user>
+              <a href="javascript:void(0)" (click)="open()">
+                <i class="fa fa-fw fa-user"></i> {{ 'Profile' | translate }}<app-pop-user [node_number]="node_number"></app-pop-user>
               </a>
             </li>
             <li>

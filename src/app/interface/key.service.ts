@@ -39,6 +39,18 @@ export class KeyService {
       .catch(this.utilService.handleApiError);
   }
 
+  get_address_node(node_number: string): Promise<string> {
+    return this.http.get<ApiResponse>(`${this.apiBaseUrl}/wnode/${node_number}`)
+      .toPromise()
+      .then(this.utilService.checkSuccess)
+      .then(response => {
+        console.log('response:', response);
+        console.log('response.data', response.data);
+        return response.data;
+      })
+      .catch(this.utilService.handleApiError);
+  }
+
   create(key: Key): Promise<Key> {
     return this.http.post<ApiResponse>(`${this.apiBaseUrl}`, key)
       .toPromise()
