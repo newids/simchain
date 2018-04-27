@@ -3,6 +3,7 @@ import {Tx} from '../../interface/tx.interface';
 import * as bitcoin from 'bitcoinjs-lib';
 import * as bigi from 'bigi';
 import {ECPair} from 'bitcoinjs-lib';
+import * as secp256k1 from 'secp256k1';
 
 @Component({
   selector: 'app-transaction',
@@ -51,14 +52,6 @@ export class TransactionComponent implements OnInit {
     // this.decryptedOutput = '';
 
 
-
-
-
-
-
-
-
-
     // const ciphertext = rsa.encryptedString(key, this.inputValue);
     // const json_string: string = JSON.stringify(ciphertext);
     // this.encryptedOutput = json_string;
@@ -74,21 +67,19 @@ export class TransactionComponent implements OnInit {
 
 
   public_key_from_private_key() {
+    // http://procbits.com/2013/08/27/generating-a-bitcoin-address-with-javascript
+    // https://github.com/cryptocoinjs/secp256k1-node
 
-//     this.private_key = 'd07a402c8f705d35d0e085ac7c67728c8105bea8a9c41006faaac91dc6742bd7';
-//     const privKeyBuf = new Buffer(this.private_key, 'hex');
-//     const privKeyBI = bigi.fromBuffer(privKeyBuf);
-//
-// // compressed
-//     const compressed = true;
-//     const privKey = new bitcoin.ECKey(privKeyBI, compressed);
-//     console.log(privKey.pub.toHex());
-//
-// // uncompressed
-//     compressed = false;
-//     privKey = new bitcoin.ECKey(privKeyBI, compressed);
-//     console.log(privKey.pub.toHex());
+    const hash = bitcoin.crypto.sha256(Buffer.from(String(Math.floor(Math.random() * 100000)), 'utf-8'));
+    const x = bigi.fromBuffer(hash);
 
+    const keypair = new bitcoin.ECPair(x, null, {compressed: true, network: bitcoin.networks.bitcoin});
+    const privKey = keypair.d;
 
+    const pubKey = secp256k1.publicKeyCreate(privKey.toBuffer(32));
+
+    console.log('privKey = keypair.privKey : ', keypair.d.toHex());
+    console.log('keypair.pubKey : ', bigi.fromBuffer(keypair.getPublicKeyBuffer()).toHex());
+    console.log('pubKey : ', bigi.fromBuffer(pubKey).toHex());
   }
 }
