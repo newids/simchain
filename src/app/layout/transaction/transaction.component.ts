@@ -36,13 +36,10 @@ export class TransactionComponent implements OnInit {
 
   generate() {
     this.tx = new Tx({
-      _id: 0,
-      height: 0,
+      height: -1,
       hash_pointer: '',
       from: this.from,
-      from_node: '',
       to: this.to,
-      to_node: '',
       amount: this.amount,
       created_date: Date.now(),
     });
@@ -107,7 +104,7 @@ export class TransactionComponent implements OnInit {
 
   save_request() {
     const newTx = new Tx({
-      height: 0,
+      height: -1,
       hash_pointer: 'hash_pointer',
       from: this.from,
       from_node: localStorage.getItem('node_number'),

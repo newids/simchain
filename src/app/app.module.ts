@@ -20,6 +20,7 @@ import {KeyService} from './interface/key.service';
 import {TxService} from './interface/tx.service';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import { DetailviewComponent } from './layout/detailview/detailview.component';
+import {BlockService} from './interface/block.service';
 
 // AoT requires an exported function for factories
 export function createTranslateLoader(http: HttpClient) {
@@ -58,7 +59,8 @@ export function tokenGetter() {
   ],
   declarations: [AppComponent],
   providers: [
-    AuthGuard, UtilService, AuthService, JwtHelperService, KeyService, TxService,
+    AuthGuard, UtilService, AuthService, JwtHelperService,
+    KeyService, TxService, BlockService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: RequestInterceptor,

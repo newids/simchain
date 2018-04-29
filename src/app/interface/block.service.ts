@@ -9,6 +9,7 @@ import {ApiResponse} from './api-response';
 
 import {Tx} from './tx.interface';
 import {address} from 'bitcoinjs-lib';
+import {Block} from '../layout/mining/block.interface';
 
 @Injectable()
 export class BlockService {
@@ -19,7 +20,7 @@ export class BlockService {
     private utilService: UtilService,
   ) {}
 
-  create_block_request(block: Block): Promise<string> {
+  create__request(block: Block): Promise<string> {
     return this.http.post<ApiResponse>(`${this.apiBaseUrl}/requests`, block)
       .toPromise()
       .then(this.utilService.checkSuccess)
@@ -29,8 +30,8 @@ export class BlockService {
       .catch(this.utilService.handleApiError);
   }
 
-  get_address_balance(from_address: string): Promise<string> {
-    return this.http.get<ApiResponse>(`${this.apiBaseUrl}/balance/${from_address}`)
+  get_latest_block(): Promise<Block[]> {
+    return this.http.get<ApiResponse>(`${this.apiBaseUrl}/latest`)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
@@ -41,8 +42,8 @@ export class BlockService {
       .catch(this.utilService.handleApiError);
   }
 
-  get_block_request(): Promise<Block[]> {
-    return this.http.get<ApiResponse>(`${this.apiBaseUrl}/requests`)
+  get_address_balance(from_address: string): Promise<string> {
+    return this.http.get<ApiResponse>(`${this.apiBaseUrl}/balance/${from_address}`)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
