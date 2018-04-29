@@ -31,6 +31,7 @@
     "@types/bitcoinjs-lib": "^3.3.3",
     "@types/decimal.js": "^7.4.0",
     "@types/node-rsa": "^0.4.3",
+    "angular2-prettyjson": "^3.0.1",
     "bigi": "^1.4.2",
     "bitcoinjs-lib": "^3.3.2",
     "buffer": "^5.1.0",

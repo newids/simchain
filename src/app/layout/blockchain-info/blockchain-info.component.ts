@@ -6,6 +6,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./blockchain-info.component.css']
 })
 export class BlockchainInfoComponent implements OnInit {
+  sb;
+  header;
+  index;
+  item;
 
   constructor() { }
 

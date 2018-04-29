@@ -11,20 +11,20 @@ import {Tx} from './tx.interface';
 import {address} from 'bitcoinjs-lib';
 
 @Injectable()
-export class TxService {
-  private apiBaseUrl = `${environment.apiBaseUrl}/tx`;
+export class BlockService {
+  private apiBaseUrl = `${environment.apiBaseUrl}/block`;
 
   constructor(
     private http: HttpClient,
     private utilService: UtilService,
   ) {}
 
-  create_tx_request(tx: Tx): Promise<string> {
-    return this.http.post<ApiResponse>(`${this.apiBaseUrl}/requests`, tx)
+  create_block_request(block: Block): Promise<string> {
+    return this.http.post<ApiResponse>(`${this.apiBaseUrl}/requests`, block)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
-        return response.data as Tx;
+        return response.data as Block;
       })
       .catch(this.utilService.handleApiError);
   }
@@ -36,73 +36,73 @@ export class TxService {
       .then(response => {
         console.log('response:', response);
         console.log('response.data', response.data);
-        return response.data as Tx;
+        return response.data as Block;
       })
       .catch(this.utilService.handleApiError);
   }
 
-  get_tx_request(): Promise<Tx[]> {
+  get_block_request(): Promise<Block[]> {
     return this.http.get<ApiResponse>(`${this.apiBaseUrl}/requests`)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
         console.log('response:', response);
         console.log('response.data', response.data);
-        return response.data as Tx;
+        return response.data as Block;
       })
       .catch(this.utilService.handleApiError);
   }
 
-  get_tx_height(height: number): Promise<Tx[]> {
+  get_block_height(height: number): Promise<Block[]> {
     return this.http.get<ApiResponse>(`${this.apiBaseUrl}/height/${height}`)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
         console.log('response:', response);
         console.log('response.data', response.data);
-        return response.data as Tx;
+        return response.data as Block;
       })
       .catch(this.utilService.handleApiError);
   }
 
-  get_tx_node(node_number: string): Promise<Tx[]> {
+  get_block_node(node_number: string): Promise<Block[]> {
     return this.http.get<ApiResponse>(`${this.apiBaseUrl}/node/${node_number}`)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
         console.log('response:', response);
         console.log('response.data', response.data);
-        return response.data as Tx;
+        return response.data as Block;
       })
       .catch(this.utilService.handleApiError);
   }
 
-  index(): Promise<Tx[]> {
+  index(): Promise<Block[]> {
     return this.http.get<ApiResponse>(`${this.apiBaseUrl}`)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
-        return response.data as Tx[];
+        return response.data as Block[];
       })
       .catch(this.utilService.handleApiError);
   }
 
-  update(txname: string, tx: Tx): Promise<Tx> {
-    return this.http.put<ApiResponse>(`${this.apiBaseUrl}/${txname}`, tx)
+  update(blockname: string, block: Block): Promise<Block> {
+    return this.http.put<ApiResponse>(`${this.apiBaseUrl}/${blockname}`, block)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
-        return response.data as Tx;
+        return response.data as Block;
       })
       .catch(this.utilService.handleApiError);
   }
 
-  destroy(txname: string): Promise<Tx> {
-    return this.http.delete<ApiResponse>(`${this.apiBaseUrl}/${txname}`)
+  destroy(blockname: string): Promise<Block> {
+    return this.http.delete<ApiResponse>(`${this.apiBaseUrl}/${blockname}`)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
-        return response.data as Tx;
+        return response.data as Block;
       })
       .catch(this.utilService.handleApiError);
   }

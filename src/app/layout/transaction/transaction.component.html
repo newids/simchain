@@ -19,6 +19,10 @@
   <div class="input-group">
     <input type="text" class="form-control" [(ngModel)]="from" name="from">
     <span class="input-group-btn">
+				<button class="btn btn-default btn-paste" type="button" (click)="getMyAddress()"><i
+          class="fa fa-key"></i> Get Address</button>
+    </span>
+    <span class="input-group-btn">
 				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#private-key"><i
           class="fa fa-paste"></i> Paste</button>
     </span>
@@ -32,6 +36,10 @@
 				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#private-key"><i
           class="fa fa-paste"></i> Paste</button>
     </span>
+    <span class="input-group-btn">
+				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#private-key"><i
+          class="fa fa-paste"></i> Paste</button>
+    </span>
   </div>
 </div>
 <div class="form-group">
@@ -39,11 +47,13 @@
   <input type="text" class="form-control" [(ngModel)]="amount" name="amount">
 </div>
 <div class="form-group">
-  <button type="button" class="btn btn-primary" (click)="generator()">Generator</button>
+  <button type="button" class="btn btn-primary" (click)="generate()">Generate Tx</button>
 </div>
 <div class="form-group">
   <label>Data</label>
-  <textarea cols="30" rows="10" class="form-control" readonly>{{ tx | json }}</textarea>
+  <!--<textarea cols="30" rows="11" class="form-control" readonly>{{ tx | json:4 }}</textarea>-->
+  <!--<pre>{{ tx | json:4 }}</pre>-->
+  <prettyjson [obj]="tx"></prettyjson>
 </div>
 <div class="form-group">
   <label>Key</label>
@@ -59,11 +69,33 @@
   <button type="button" class="btn btn-primary" (click)="sign()">Sign</button>
 </div>
 <div class="form-group">
-  <label>Signature</label>
-  <textarea cols="30" rows="3" class="form-control" [(ngModel)]="tx" readonly></textarea>
+  <label>SHA256</label>
+  <input type="text" class="form-control"  [(ngModel)]="sha256" name="sha256">
 </div>
 <div class="form-group">
-  <button type="submit" class="btn btn-primary" (click)="broardcasting()">Broadcasting</button>
+  <label>Signature</label>
+  <input type="text" class="form-control"  [(ngModel)]="signature" name="signature">
+</div>
+<div class="form-group">
+  <label>Key</label>
+  <div class="input-group">
+    <input type="text" class="form-control" [(ngModel)]="public_key">
+    <span class="input-group-btn">
+				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#public-key"><i
+          class="fa fa-paste"></i> Paste</button>
+    </span>
+  </div>
+</div>
+<div class="form-group">
+  <button type="submit" class="btn btn-primary" (click)="verify()">Verify</button>
+</div>
+<div class="form-group">
+  <label>Verified</label>
+  <input type="text" class="form-control"  [(ngModel)]="verified" name="verified">
+</div>
+
+<div class="form-group">
+  <button type="submit" class="btn btn-primary" (click)="broadcasting()">Broadcasting</button>
   <button type="button" class="btn btn-default" (click)="clearForm()"><i class="fa fa-trash"></i> Clear</button>
 </div>
 

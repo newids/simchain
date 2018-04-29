@@ -17,6 +17,7 @@ import {UtilService} from './interface/util.service'; // 2
 import {AuthService} from './interface/auth.service'; // 3
 import {RequestInterceptor} from './interface/request-interceptor.service';
 import {KeyService} from './interface/key.service';
+import {TxService} from './interface/tx.service';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import { DetailviewComponent } from './layout/detailview/detailview.component';
 
@@ -57,7 +58,7 @@ export function tokenGetter() {
   ],
   declarations: [AppComponent],
   providers: [
-    AuthGuard, UtilService, AuthService, JwtHelperService, KeyService,
+    AuthGuard, UtilService, AuthService, JwtHelperService, KeyService, TxService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: RequestInterceptor,

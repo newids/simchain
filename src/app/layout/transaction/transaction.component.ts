@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Tx} from '../../interface/tx.interface';
 import * as bitcoin from 'bitcoinjs-lib';
 import * as bigi from 'bigi';
-import {ECPair} from 'bitcoinjs-lib';
 import * as secp256k1 from 'secp256k1';
+import {KeyService} from '../../interface/key.service';
+import {Key} from '../../interface/key.interface';
+import {Network} from 'bitcoinjs-lib';
+import {ECSignature} from 'bitcoinjs-lib';
+import {TxService} from '../../interface/tx.service';
 
 @Component({
   selector: 'app-transaction',
@@ -13,17 +17,24 @@ import * as secp256k1 from 'secp256k1';
 export class TransactionComponent implements OnInit {
   from;
   to;
-  amount;
+  amount = 10;
   tx_raw;
   tx;
+  sha256;
+  signature;
+  verified;
   private_key;
+  public_key;
+  keyPair;
+  keyList: Key[];
 
-  constructor() { }
+  constructor(private keyService: KeyService, private txService: TxService) {
+  }
 
   ngOnInit() {
   }
 
-  generator() {
+  generate() {
     this.tx = new Tx({
       _id: 0,
       height: 0,
@@ -34,52 +45,126 @@ export class TransactionComponent implements OnInit {
       to_node: '',
       amount: this.amount,
       created_date: Date.now(),
-      });
+    });
 
     // this.tx_raw = JSON.stringify(tx);
   }
 
   sign() {
-    this.public_key_from_private_key();
-    // try {
-    //   let keyPair = new bitcoin.ECPair()
-    //   const encrypted = this.rsaKeyPair.encrypt(this.inputValue, 'base64');
-    //   this.encryptedOutput = encrypted;    // setMaxDigits(38);
-    // } catch (e) {
-    //   console.log('error:', e.toLocaleString());
-    //   this.encryptedOutput = '';
-    // }
-    // this.decryptedOutput = '';
+    try {
+    const keyPair = this.public_key_from_private_key();
 
+    console.log('json : ', JSON.stringify(this.tx));
+    this.sha256 = bigi.fromBuffer(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx)))).toHex();
+    console.log('sha256 : ', this.sha256);
+    const ecSignature = keyPair.sign(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx))));
+    this.signature = bigi.fromBuffer(ecSignature.toDER()).toHex();
+    console.log('signature : ', this.signature);
+    } catch (e) {
+      this.verified = e.toLocaleString();
+    }
+  }
 
-    // const ciphertext = rsa.encryptedString(key, this.inputValue);
-    // const json_string: string = JSON.stringify(ciphertext);
-    // this.encryptedOutput = json_string;
+  verify() {
+    try {
+      const testKeyPair = bitcoin.ECPair.fromPublicKeyBuffer(Buffer.from(this.public_key, 'hex'), bitcoin.networks.bitcoin);
+      console.log('test public_key: ', this.keyList[0].public_key);
+      console.log('gen public_key: ', bigi.fromBuffer(testKeyPair.getPublicKeyBuffer()).toHex());
+      console.log('test private_key: ', this.keyList[0].private_key);
+      // console.log('gen private_key: ', testKeyPair.d.toHex()); -------> ERROR TypeError: Cannot read property 'toHex' of undefined
 
-    // const hash = bitcoin.crypto.sha256(Buffer.from(this.inputValue, 'utf-8'));
-    // const signature = this.keyPair.sign(hash);
-    // this.encryptedOutput = bigi.fromBuffer(signature.toDER()).toHex();
+      // const isVerified = testKeyPair.verify(Buffer.from(this.signature),
+      // bitcoin.ECSignature.fromDER(Buffer.from(this.signature)));
+
+      const hash = Buffer.from(this.sha256, 'hex');
+      const signature = bitcoin.ECSignature.fromDER(Buffer.from(this.signature, 'hex'));
+      const isVerified = testKeyPair.verify(hash, signature);
+
+      this.verified = isVerified.toLocaleString();
+    } catch (e) {
+      this.verified = e.toLocaleString();
+    }
   }
 
   broadcasting() {
-
+    try {
+      this.txService.get_address_balance(this.from)
+        .then(tx => function (tx) {
+          if (tx.total > this.amount) {
+            this.save_request();
+          }
+          else {
+            this.verified = 'Balance Too Low.';
+          }
+        })
+        .catch(response => {
+          this.verified = 'Rejected.';
+        });
+    } catch (e) {
+      console.log('error: ', e.toLocaleString());
+    }
   }
 
+  save_request() {
+    const newTx = new Tx({
+      height: 0,
+      hash_pointer: 'hash_pointer',
+      from: this.from,
+      from_node: localStorage.getItem('node_number'),
+      to: this.to,
+      to_node: 'unknown',
+      amount: this.amount,
+      created_date: this.tx.created_date,
+    });
 
-  public_key_from_private_key() {
+    try {
+      this.txService.create_tx_request(newTx)
+        .then(tx => {
+          this.verified = 'Registered.';
+        })
+        .catch(response => {
+          this.verified = 'Rejected.';
+        });
+    } catch (e) {
+      console.log('error: ', e.toLocaleString());
+    }
+  }
+
+  getMyAddress() {
+    const node_number = localStorage.getItem('node_number');
+    this.keyService.get_key_node(node_number)
+      .then(data => {
+        this.keyList = data;
+        console.log('set node_number(node_number: string) Key : ', this.keyList);
+        if (this.keyList.length > 0) {
+          this.from = this.keyList[0].address;
+          this.private_key = this.keyList[0].private_key;
+          this.public_key = this.keyList[0].public_key;
+          this.keyPair = bitcoin.ECPair.fromWIF(this.keyList[0].wif, bitcoin.networks.bitcoin);
+        }
+        if (this.keyList.length > 1) {
+          this.to = this.keyList[1].address;
+        }
+      });
+  }
+
+  public_key_from_private_key(): bitcoin.ECPair {
     // http://procbits.com/2013/08/27/generating-a-bitcoin-address-with-javascript
     // https://github.com/cryptocoinjs/secp256k1-node
 
-    const hash = bitcoin.crypto.sha256(Buffer.from(String(Math.floor(Math.random() * 100000)), 'utf-8'));
-    const x = bigi.fromBuffer(hash);
+    const pubKey = secp256k1.publicKeyCreate(Buffer.from(this.private_key, 'hex'));
 
-    const keypair = new bitcoin.ECPair(x, null, {compressed: true, network: bitcoin.networks.bitcoin});
-    const privKey = keypair.d;
+    const keyPairFromPrivateKey = new bitcoin.ECPair(bigi.fromBuffer(Buffer.from(this.private_key, 'hex')), null,
+      {compressed: true, network: bitcoin.networks.bitcoin});
 
-    const pubKey = secp256k1.publicKeyCreate(privKey.toBuffer(32));
+    console.log('this.private_key : ', this.private_key);
+    console.log('this.public_key : ', this.public_key);
 
-    console.log('privKey = keypair.privKey : ', keypair.d.toHex());
-    console.log('keypair.pubKey : ', bigi.fromBuffer(keypair.getPublicKeyBuffer()).toHex());
-    console.log('pubKey : ', bigi.fromBuffer(pubKey).toHex());
+    console.log('created pubKey : ', bigi.fromBuffer(pubKey).toHex());
+
+    console.log('keypair.privKey : ', keyPairFromPrivateKey.d.toHex());
+    console.log('keypair.pubKey : ', bigi.fromBuffer(keyPairFromPrivateKey.getPublicKeyBuffer()).toHex());
+
+    return keyPairFromPrivateKey;
   }
 }
