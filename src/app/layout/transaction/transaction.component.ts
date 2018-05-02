@@ -117,7 +117,7 @@ export class TransactionComponent implements OnInit {
     try {
       this.txService.create_tx_request(newTx)
         .then(tx => {
-          this.verified = 'Registered.';
+          this.verified = 'Saved.';
         })
         .catch(response => {
           this.verified = 'Rejected.';
