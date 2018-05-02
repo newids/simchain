@@ -86,11 +86,14 @@ export class TransactionComponent implements OnInit {
   broadcasting() {
     try {
       this.txService.get_address_balance(this.from)
-        .then(tx => function (tx) {
-          if (tx.total > this.amount) {
+        .then((data) => {
+          const balance = data[0]['total'];
+          console.log('data: ', data);
+          console.log('data.total: ', data[0]['total']);
+          console.log('this.amount: ', this.amount);
+          if (balance >= this.amount) {
             this.save_request();
-          }
-          else {
+          } else {
             this.verified = 'Balance Too Low.';
           }
         })

@@ -45,11 +45,10 @@
             placeholder='Type to filter the Address...'
             (keyup)='updateFilter($event)'
           /> <i class="fa fa-search"></i>
-
         </div>
 
         <div class="col-sm-12">
-          <h4 class="panel-title">Wallet Transactions</h4>
+          <h4 class="panel-title">Transactions</h4>
           <ngx-datatable
             #table2
             class="material"
@@ -66,7 +65,6 @@
             placeholder='Type to filter the Address...'
             (keyup)='updateFilter2($event)'
           /> <i class="fa fa-search"></i>
-
         </div>
 
         <div class="wrap-btn col-sm-12" v-if="nodeNum == '0001'">

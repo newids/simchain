@@ -14,6 +14,13 @@
 </div>
 <!-- / desc -->
 
+<div class="d-inline-block dropdown" ngbDropdown #myDrop="ngbDropdown">
+  <button class="btn btn-outline-primary" ngbDropdownToggle>{{address}}</button>
+  <div ngbDropdownMenu>
+    <button class="dropdown-item" *ngIf="addressList">{{ addressList }}</button>
+  </div>
+</div>
+
 <div class="panel panel-primary">
   <div class="panel-heading">
     <h4 class="panel-title">Header</h4>
@@ -64,6 +71,26 @@
   <!-- / panel-body -->
 </div>
 <!-- / panel -->
+
+<div class="col-sm-12">
+  <h4 class="panel-title">Transactions</h4>
+  <ngx-datatable
+    #table2
+    class="material"
+    [rows]="rows_tx"
+    [columns]="columns_tx"
+    [headerHeight]="40"
+    [footerHeight]="40"
+    [rowHeight]="'auto'"
+    (activate)="onActivateTx($event)">
+  </ngx-datatable>
+  <input
+    type='text'
+    style='padding:5px;margin:15px auto;width:70%;'
+    placeholder='Type to filter the Address...'
+    (keyup)='updateFilter2($event)'
+  /> <i class="fa fa-search"></i>
+</div>
 
 <div class="panel panel-info">
   <div class="panel-heading">

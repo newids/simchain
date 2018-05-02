@@ -19,7 +19,7 @@ export class TxService {
     private utilService: UtilService,
   ) {}
 
-  create_tx_request(tx: Tx): Promise<string> {
+  create_tx_request(tx: Tx): Promise<Tx> {
     return this.http.post<ApiResponse>(`${this.apiBaseUrl}/requests`, tx)
       .toPromise()
       .then(this.utilService.checkSuccess)
@@ -36,7 +36,7 @@ export class TxService {
       .then(response => {
         console.log('response:', response);
         console.log('response.data', response.data);
-        return response.data as Tx;
+        return response.data
       })
       .catch(this.utilService.handleApiError);
   }

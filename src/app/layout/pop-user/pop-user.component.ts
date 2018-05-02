@@ -88,7 +88,7 @@ export class PopUserComponent implements OnInit {
     this.node_number = node;
     this.email = mail;
 
-    this.fetch((data) => {
+    this.fetch(data => {
       // cache our list
       this.keyList = [...data];
 
