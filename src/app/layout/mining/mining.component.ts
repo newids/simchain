@@ -16,13 +16,14 @@ export class MiningComponent implements OnInit {
   transaction: Transaction;
   index = '';
   timestamp = '';
+  keyList;
   address = '';
+  node_number = '';
 
   columns_tx = [
-    {prop: 'number'},
-    {name: 'from'},
-    {name: 'to'},
-    {name: 'amount'},
+    {name: 'From', prop: 'from', flexGlow: 3},
+    {name: 'To', prop: 'to', flexGlow: 3},
+    {name: 'Amount', prop: 'amount', flexGlow: 1}
   ];
   rows_tx = [];
 
@@ -56,13 +57,36 @@ export class MiningComponent implements OnInit {
       _id: '0',
     });
 
+    try {
+      this.node_number = localStorage.getItem('node_number');
+
+      this.keyService.get_key_node(this.node_number)
+        .then(keyList => {
+          this.keyList = keyList;
+          this.address = keyList[0].address;
+          console.log('keyList: ', keyList);
+          console.log('this.address: ', this.address);
+
+          this.createTxList();
+        })
+        .catch(error => {
+          console.log('error: ', error.toLocaleString());
+        });
+    } catch (e) {
+      console.log('Exception: ', e.toLocaleString());
+    }
+
+
+  }
+
+  createTxList() {
     this.rows_tx = [{
       height: -1,
-      hash_pointer: '',
-      from: '',
-      from_node: '',
+      hash_pointer: ' ',
+      from: ' ',
+      from_node: ' ',
       to: this.address,
-      to_node: localStorage.getItem('node_number'),
+      to_node: this.node_number,
       amount: 50,
       created_date: Date,
     }];
@@ -70,15 +94,20 @@ export class MiningComponent implements OnInit {
     try {
       this.txService.get_tx_request()
         .then(tx => {
-          this.rows_tx.push(tx);
+          this.rows_tx.push(...tx);
+          this.rows_tx = [...this.rows_tx];
+          console.log('tx: ', tx);
+          console.log('this.rows_tx: ', this.rows_tx);
         })
         .catch(error => {
           console.log('error: ', error.toLocaleString());
         });
-    }
-    catch (e) {
+    } catch (e) {
       console.log('Exception: ', e.toLocaleString());
     }
   }
 
+  miningStart() {
+
+  }
 }

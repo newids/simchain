@@ -5,6 +5,7 @@ import {NgbAlertModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import {MiningRoutingModule} from './mining-routing.module';
 import {MiningComponent} from './mining.component';
+import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 
 @NgModule({
   imports: [
@@ -12,6 +13,7 @@ import {MiningComponent} from './mining.component';
     NgbModule.forRoot(),
     NgbAlertModule.forRoot(),
     FormsModule,
+    NgxDatatableModule,
     MiningRoutingModule
   ],
   declarations: [MiningComponent]

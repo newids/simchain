@@ -17,7 +17,7 @@
 <div class="d-inline-block dropdown" ngbDropdown #myDrop="ngbDropdown">
   <button class="btn btn-outline-primary" ngbDropdownToggle>{{address}}</button>
   <div ngbDropdownMenu>
-    <button class="dropdown-item" *ngIf="addressList">{{ addressList }}</button>
+    <button class="dropdown-item" *ngFor="let key of keyList">{{ key.address }}</button>
   </div>
 </div>
 
@@ -72,72 +72,35 @@
 </div>
 <!-- / panel -->
 
-<div class="col-sm-12">
-  <h4 class="panel-title">Transactions</h4>
-  <ngx-datatable
-    #table2
-    class="material"
-    [rows]="rows_tx"
-    [columns]="columns_tx"
-    [headerHeight]="40"
-    [footerHeight]="40"
-    [rowHeight]="'auto'"
-    (activate)="onActivateTx($event)">
-  </ngx-datatable>
-  <input
-    type='text'
-    style='padding:5px;margin:15px auto;width:70%;'
-    placeholder='Type to filter the Address...'
-    (keyup)='updateFilter2($event)'
-  /> <i class="fa fa-search"></i>
-</div>
-
-<div class="panel panel-info">
+<div class="panel panel-default">
   <div class="panel-heading">
     <h4 class="panel-title">Transactions</h4>
   </div>
-  <!-- / .panel-heading -->
+  <!-- / panel-heading -->
   <div class="panel-body">
-    <table class="table table-bordered table-striped table-hover">
-      <caption></caption>
-      <colgroup>
-        <col>
-      </colgroup>
-      <thead>
-      <tr>
-        <th scope="col">No</th>
-        <th scope="col">Hash Pointer</th>
-        <th scope="col">From</th>
-        <th scope="col">To</th>
-        <th scope="col">Amount</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-if="tx == ''">
-        <td colspan="5" class="nodata">No Data</td>
-      </tr>
-      <tr v-else v-for="(item, index) in tx">
-        <td>{{ index }}</td>
-        <td>{{ transaction.hash_pointer }}</td>
-        <td>{{ transaction.from }}</td>
-        <td>{{ transaction.to }}</td>
-        <td>{{ transaction.amount }}</td>
-      </tr>
-      </tbody>
-    </table>
-
-      <div class="form-group">
-        <div class="input-group">
-          <input type="text" class="form-control" [(ngModel)]="s" placeholder="Search...">
-          <span class="input-group-btn">
-								<button type="submit" class="btn btn-default"><i class="fa fa-search"></i> Search</button>
-							</span>
-        </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <ngx-datatable
+          #table_tx
+          class="material"
+          [rows]="rows_tx"
+          [columns]="columns_tx"
+          [headerHeight]="40"
+          [footerHeight]="40"
+          [rowHeight]="'auto'"
+          [columnMode]="force"></ngx-datatable>
+        <input
+          type='text'
+          style='padding:5px;margin:15px auto;width:70%;'
+          placeholder='Type to filter the Address...'
+          (keyup)='updateFilter2($event)'
+        /> <i class="fa fa-search"></i>
       </div>
+    </div>
+    <!-- / .row -->
   </div>
   <!-- / .panel-body -->
 </div>
-<!-- / .panel panel-info -->
 
 <div class="panel panel-default">
   <div class="panel-heading">
@@ -147,16 +110,32 @@
   <div class="panel-body">
     <div class="row">
       <div class="col-sm-3">
-        <button type="button" class="btn btn-primary btn-block" (click)="miningStart">Mining Start</button>
+        <button type="button" class="btn btn-primary btn-block" (click)="miningStart()">Mining Start</button>
       </div>
       <div class="col-sm-3">
-        <button type="button" class="btn btn-primary btn-block" (click)="broadcasting">Broadcasting</button>
+        <button type="button" class="btn btn-primary btn-block" (click)="broadcasting()">Broadcasting</button>
       </div>
       <div class="col-sm-3">
-        <button type="button" class="btn btn-primary btn-block" (click)="reload">Reload</button>
+        <button type="button" class="btn btn-primary btn-block" (click)="reload()">Reload</button>
       </div>
       <div class="col-sm-3">
-        <button type="button" class="btn btn-primary btn-block" (click)="autoMode">Auto Mode</button>
+        <button type="button" class="btn btn-primary btn-block" (click)="autoMode()">Auto Mode</button>
+      </div>
+    </div>
+    <!-- / .row -->
+  </div>
+  <!-- / .panel-body -->
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title">Log</h4>
+  </div>
+  <!-- / panel-heading -->
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-12">
+        <textarea>{{log}}</textarea>
       </div>
     </div>
     <!-- / .row -->

@@ -19,16 +19,6 @@ export class KeyService {
   ) {
   }
 
-  index(): Promise<Key[]> {
-    return this.http.get<ApiResponse>(`${this.apiBaseUrl}`)
-      .toPromise()
-      .then(this.utilService.checkSuccess)
-      .then(response => {
-        return response.data as Key[];
-      })
-      .catch(this.utilService.handleApiError);
-  }
-
   get_key_node(node_number: string): Promise<Key[]> {
     return this.http.get<ApiResponse>(`${this.apiBaseUrl}/node/${node_number}`)
       .toPromise()
