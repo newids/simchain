@@ -4,6 +4,7 @@ import {Transaction} from '../transaction/transaction.interface';
 import {BlockService} from '../../interface/block.service';
 import {KeyService} from '../../interface/key.service';
 import {TxService} from '../../interface/tx.service';
+import * as CryptoJS from 'crypto-js';
 
 @Component({
   selector: 'app-mining',
@@ -11,7 +12,7 @@ import {TxService} from '../../interface/tx.service';
   styleUrls: ['./mining.component.css']
 })
 export class MiningComponent implements OnInit {
-
+  version = '02000000';
   block: Block;
   transaction: Transaction;
   index = '';
@@ -19,6 +20,8 @@ export class MiningComponent implements OnInit {
   keyList;
   address = '';
   node_number = '';
+  textLog = '';
+  difficultyPrefix = '00';
 
   columns_tx = [
     {name: 'From', prop: 'from', flexGlow: 3},
@@ -107,7 +110,18 @@ export class MiningComponent implements OnInit {
     }
   }
 
-  miningStart() {
-
+  validateHash(hash: string): boolean {
+    return hash.indexOf(this.difficultyPrefix) === 0;
   }
+
+  miningStart() {
+    for (let nonce = 0, headerHash = '9999'; !this.validateHash(headerHash); nonce++) {
+      const headerData = [this.version, this.block.prev_hash, this.block.merkle_root, this.block.time, this.block.nbits, nonce].join('');
+      headerHash = CryptoJS.SHA256(headerData).toString();
+      this.textLog += `${nonce} :: ${headerHash}\n`;
+      console.log(nonce, headerHash);
+    }
+    console.log(this.textLog);
+  }
+
 }

@@ -83,7 +83,7 @@ export class TransactionComponent implements OnInit {
     }
   }
 
-  broadcasting() {
+  broadcast() {
     try {
       this.txService.get_address_balance(this.from)
         .then((data) => {
