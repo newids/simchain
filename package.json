@@ -45,6 +45,7 @@
     "ng2-charts": "^1.6.0",
     "ng2-web-cryptography": "0.0.3",
     "ngx-bootstrap": "^2.0.4",
+    "ngx-clipboard": "^10.0.0",
     "node-rsa": "^0.4.2",
     "rxjs": "^5.5.8",
     "secp256k1": "^3.5.0",

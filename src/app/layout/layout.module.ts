@@ -12,6 +12,7 @@ import {PopBlockComponent} from './pop-block/pop-block.component';
 import {PopWalletComponent} from './pop-wallet/pop-wallet.component';
 import {DetailviewComponent} from './detailview/detailview.component';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
+import {ClipboardModule} from 'ngx-clipboard';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import {NgxDatatableModule} from '@swimlane/ngx-datatable';
     TranslateModule,
     NgbModule.forRoot(),
     NgbDropdownModule.forRoot(),
-    NgxDatatableModule
+    NgxDatatableModule,
+    ClipboardModule
   ],
   declarations: [LayoutComponent, SidebarComponent, HeaderComponent, PopUserComponent, PopBlockComponent, PopWalletComponent, DetailviewComponent]
 })

@@ -32,5 +32,9 @@ export class HashComponent implements OnInit {
     console.log('outputValue=', this.outputValue2);
   }
 
+  copied() {
+    // TODO: copied...
+    console.log('copied to clipboard.');
+  }
 
 }

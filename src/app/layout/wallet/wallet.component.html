@@ -22,7 +22,7 @@
   <div class="input-group">
     <input type="text" class="form-control" name="privateKeyValue" [(ngModel)]="privateKeyValue">
     <span class="input-group-btn">
-      <button type="button" class="btn btn-secondary" (click)="pastePrivateKey()"><i class="fa fa-copy"></i> Copy</button>
+      <button type="button" class="btn btn-outline-secondary" (click)="pastePrivateKey()"><i class="fa fa-copy"></i> Copy</button>
     </span>
   </div>
 </div>
@@ -36,20 +36,25 @@
 </div>
 <div class="form-group">
   <label>Private key (WIF format, uncompressed)</label>
-  <input type="text" class="form-control" name="wifValue" [(ngModel)]="wifValue">
+  <div class="input-group">
+    <input type="text" class="form-control" name="wifValue" [(ngModel)]="wifValue">
+    <span class="input-group-btn">
+      <button type="button" class="btn btn-outline-secondary" (click)="pastePrivateKey()"><i class="fa fa-copy"></i> Copy</button>
+    </span>
+  </div>
 </div>
 <div class="form-group">
   <label>Address</label>
   <div class="input-group">
     <input type="text" id="address" class="form-control" name="keyPair.address" readonly [(ngModel)]="addressValue">
     <span class="input-group-btn">
-      <button type="button" class="btn btn-secondary btn-copy" data-clipboard-target="#address"><i class="fa fa-copy"></i> Copy</button>
+      <button type="button" class="btn btn-outline-secondary btn-copy" data-clipboard-target="#address"><i class="fa fa-copy"></i> Copy</button>
     </span>
   </div>
 </div>
 <div class="form-group">
-  <button type="button" class="btn btn-primary" (click)="registerKey()">Register</button>
-  <button type="button" class="btn btn-secondary" (click)="clearForm()"><i class="fa fa-trash"></i> Clear</button>
+  <button type="button" class="btn btn-primary" (click)="registerKey()">Save this wallet</button>
+  <button type="button" class="btn btn-outline-secondary" (click)="clearForm()"><i class="fa fa-trash"></i> Clear</button>
 </div>
 
 <div class="alert-dismissible">

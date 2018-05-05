@@ -12,6 +12,7 @@ import {AppComponent} from './app.component';
 import {AuthGuardService as AuthGuard} from './shared';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {JwtModule} from '@auth0/angular-jwt';
+import {ClipboardModule} from 'ngx-clipboard';
 
 import {UtilService} from './interface/util.service'; // 2
 import {AuthService} from './interface/auth.service'; // 3
@@ -54,6 +55,7 @@ export function tokenGetter() {
       }
     }),
     NgxDatatableModule,
+    ClipboardModule,
     AppRoutingModule
   ],
   declarations: [AppComponent],

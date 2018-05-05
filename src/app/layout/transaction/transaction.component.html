@@ -19,11 +19,11 @@
   <div class="input-group">
     <input type="text" class="form-control" [(ngModel)]="from" name="from">
     <span class="input-group-btn">
-				<button class="btn btn-default btn-paste" type="button" (click)="getMyAddress()"><i
+				<button class="btn btn-outline-secondary btn-paste" type="button" (click)="getMyAddress()"><i
           class="fa fa-key"></i> Get Address</button>
     </span>
     <span class="input-group-btn">
-				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#private-key"><i
+				<button class="btn btn-outline-secondary btn-paste" type="button" data-clipboard-target="#private-key"><i
           class="fa fa-paste"></i> Paste</button>
     </span>
   </div>
@@ -33,11 +33,11 @@
   <div class="input-group">
     <input type="text" class="form-control" [(ngModel)]="to" name="to">
     <span class="input-group-btn">
-				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#private-key"><i
+				<button class="btn btn-outline-secondary btn-paste" type="button" data-clipboard-target="#private-key"><i
           class="fa fa-paste"></i> Paste</button>
     </span>
     <span class="input-group-btn">
-				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#private-key"><i
+				<button class="btn btn-outline-secondary btn-paste" type="button" data-clipboard-target="#private-key"><i
           class="fa fa-paste"></i> Paste</button>
     </span>
   </div>
@@ -60,7 +60,7 @@
   <div class="input-group">
     <input type="text" class="form-control" [(ngModel)]="private_key">
     <span class="input-group-btn">
-				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#private-key"><i
+				<button class="btn btn-outline-secondary btn-paste" type="button" data-clipboard-target="#private-key"><i
           class="fa fa-paste"></i> Paste</button>
     </span>
   </div>
@@ -81,7 +81,7 @@
   <div class="input-group">
     <input type="text" class="form-control" [(ngModel)]="public_key">
     <span class="input-group-btn">
-				<button class="btn btn-default btn-paste" type="button" data-clipboard-target="#public-key"><i
+				<button class="btn btn-outline-secondary btn-paste" type="button" data-clipboard-target="#public-key"><i
           class="fa fa-paste"></i> Paste</button>
     </span>
   </div>
@@ -96,7 +96,7 @@
 
 <div class="form-group">
   <button type="submit" class="btn btn-primary" (click)="broadcast()">Broadcast</button>
-  <button type="button" class="btn btn-default" (click)="clearForm()"><i class="fa fa-trash"></i> Clear</button>
+  <button type="button" class="btn btn-outline-secondary" (click)="clearForm()"><i class="fa fa-trash"></i> Clear</button>
 </div>
 
 <div class="alert-dismissible">

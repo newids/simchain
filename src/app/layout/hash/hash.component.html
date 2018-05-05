@@ -17,43 +17,45 @@
 <form>
   <div class="form-group">
     <label>input</label>
-    <textarea [(ngModel)]="textValue" name="textValue" id="input1" class="form-control" cols="30" rows="3"></textarea>
+    <textarea [(ngModel)]="textValue" name="textValue" id="textValue" class="form-control" cols="30" rows="5"></textarea>
   </div>
   <div class="form-group">
     <button type="button" class="btn btn-primary" (click)="hash()">Hash</button>
-    <button type="reset" class="btn btn-default"><i class="fa fa-trash"></i> Clear</button>
+    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-trash"></i> Clear</button>
   </div>
   <div class="form-group">
     <label>output</label>
     <div class="input-group">
-      <input  [(ngModel)]="outputValue" name="outputValue"
-              [ngModelOptions]="{standalone: true}" type="text" id="output1" class="form-control">
-      <div class="input-group-append">
-						<button class="btn btn-secondary btn-copy" type="button" data-clipboard-target="#output1"><i
-              class="fa fa-copy"></i> copy</button>
-      </div>
+      <input [(ngModel)]="outputValue" name="outputValue"
+             [ngModelOptions]="{standalone: true}" type="text" id="outputValue" class="form-control" readonly>
+      <span class="input-group-btn">
+        <button class="btn btn-outline-secondary btn-copy" type="button" (click)="copied()"
+                ngxClipboard [cbContent]="outputValue"><i class="fa fa-copy"></i> copy</button>
+      </span>
     </div>
   </div>
 </form>
 
 <hr>
 
+<form>
   <div class="form-group">
     <label>input</label>
-    <textarea id="input2" class="form-control" cols="30" rows="3" [(ngModel)]="textValue2"></textarea>
+    <textarea [(ngModel)]="textValue2" name="textValue2" id="textValue2" class="form-control" cols="30" rows="5"></textarea>
   </div>
   <div class="form-group">
     <button type="button" class="btn btn-primary" (click)="hash2()">Hash</button>
-    <button type="reset" class="btn btn-default"><i class="fa fa-trash"></i> Clear</button>
+    <button type="reset" class="btn btn-outline-secondary"><i class="fa fa-trash"></i> Clear</button>
   </div>
   <div class="form-group">
     <label>output</label>
     <div class="input-group">
-      <input type="text" id="output2" class="form-control" [(ngModel)]="outputValue2"
-             [ngModelOptions]="{standalone: true}">
+      <input [(ngModel)]="outputValue2" name="outputValue2"
+             [ngModelOptions]="{standalone: true}" type="text" id="outputValue2" class="form-control" readonly>
       <span class="input-group-btn">
-						<button class="btn btn-default btn-copy" type="button" data-clipboard-target="#output2"><i
-              class="fa fa-copy"></i> copy</button>
-					</span>
+        <button class="btn btn-outline-secondary btn-copy" type="button" (click)="copied()"
+                ngxClipboard [cbContent]="outputValue2"><i class="fa fa-copy"></i> copy</button>
+      </span>
     </div>
   </div>
+</form>
