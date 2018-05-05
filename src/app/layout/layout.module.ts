@@ -9,7 +9,6 @@ import {SidebarComponent} from './components/sidebar/sidebar.component';
 import {HeaderComponent} from './components/header/header.component';
 import {PopUserComponent} from './pop-user/pop-user.component';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
-import {DetailviewComponent} from './detailview/detailview.component';
 
 @NgModule({
   imports: [
@@ -20,7 +19,7 @@ import {DetailviewComponent} from './detailview/detailview.component';
     NgbDropdownModule.forRoot(),
     NgxDatatableModule
   ],
-  declarations: [LayoutComponent, SidebarComponent, HeaderComponent, PopUserComponent, DetailviewComponent]
+  declarations: [LayoutComponent, SidebarComponent, HeaderComponent, PopUserComponent]
 })
 export class LayoutModule {
 }
