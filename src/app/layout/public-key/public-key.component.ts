@@ -21,6 +21,7 @@ export class PublicKeyComponent implements OnInit {
   encryptedOutput = '';
   decryptedOutput = '';
   rsaKeyPair;
+  alertMessage;
 
   constructor() {
   }

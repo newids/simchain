@@ -132,4 +132,18 @@ export class MiningComponent implements OnInit {
     console.log('Elapsed Time : ', (Date.now() - start) / 1000, ' sec.');
   }
 
+
+  broadcast() {
+
+  }
+
+  reload() {
+
+  }
+
+  updateFilter2(event) {
+
+  }
+
+
 }

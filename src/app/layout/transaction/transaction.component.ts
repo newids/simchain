@@ -27,6 +27,7 @@ export class TransactionComponent implements OnInit {
   public_key;
   keyPair;
   keyList: Key[];
+  alertMessage;
 
   constructor(private keyService: KeyService, private txService: TxService) {
   }
@@ -166,5 +167,9 @@ export class TransactionComponent implements OnInit {
     console.log('keypair.pubKey : ', bigi.fromBuffer(keyPairFromPrivateKey.getPublicKeyBuffer()).toHex());
 
     return keyPairFromPrivateKey;
+  }
+
+  clearForm() {
+
   }
 }

@@ -21,6 +21,8 @@ export class SymmetricKeyComponent implements OnInit {
   txtCiphertext2: string;
   txtPlaintext2: string;
   alertMessage: string;
+  lenPlaintext;
+  lenCiphertext;
   private _alert = new Subject<string>();
 
   alert() {

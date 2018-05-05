@@ -16,4 +16,8 @@ export class BlockchainInfoComponent implements OnInit {
   ngOnInit() {
   }
 
+  callback() {
+
+  }
+
 }

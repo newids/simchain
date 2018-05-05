@@ -19,7 +19,6 @@ import {RequestInterceptor} from './interface/request-interceptor.service';
 import {KeyService} from './interface/key.service';
 import {TxService} from './interface/tx.service';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
-import { DetailviewComponent } from './layout/detailview/detailview.component';
 import {BlockService} from './interface/block.service';
 
 // AoT requires an exported function for factories

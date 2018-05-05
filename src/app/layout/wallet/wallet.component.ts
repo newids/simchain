@@ -98,4 +98,8 @@ export class WalletComponent implements OnInit {
     this.alertMessage = null;
   }
 
+  pastePrivateKey() {
+
+  }
+
 }
