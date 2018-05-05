@@ -5,6 +5,7 @@ import {BlockService} from '../../interface/block.service';
 import {KeyService} from '../../interface/key.service';
 import {TxService} from '../../interface/tx.service';
 import * as CryptoJS from 'crypto-js';
+import {D} from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-mining',
@@ -16,12 +17,14 @@ export class MiningComponent implements OnInit {
   block: Block;
   transaction: Transaction;
   index = '';
-  timestamp = '';
   keyList;
   address = '';
   node_number = '';
-  textLog = '';
-  difficultyPrefix = '00';
+  difficultyPrefix = '0000';
+  nonce = 0;
+  newHash = '';
+  timeout = 300; // 5 minute
+  logginMode = false;
 
   columns_tx = [
     {name: 'From', prop: 'from', flexGlow: 3},
@@ -114,14 +117,19 @@ export class MiningComponent implements OnInit {
     return hash.indexOf(this.difficultyPrefix) === 0;
   }
 
-  miningStart() {
-    for (let nonce = 0, headerHash = '9999'; !this.validateHash(headerHash); nonce++) {
+  findNonce() {
+    const start = Date.now();
+    for (let nonce = 0, headerHash = '9999'; Date.now() - start < this.timeout * 1000 ; nonce++) {
       const headerData = [this.version, this.block.prev_hash, this.block.merkle_root, this.block.time, this.block.nbits, nonce].join('');
       headerHash = CryptoJS.SHA256(headerData).toString();
-      this.textLog += `${nonce} :: ${headerHash}\n`;
       console.log(nonce, headerHash);
+      if (this.validateHash(headerHash)) {
+        this.nonce = nonce;
+        this.newHash = headerHash;
+        break;
+      }
     }
-    console.log(this.textLog);
+    console.log('Elapsed Time : ', (Date.now() - start) / 1000, ' sec.');
   }
 
 }

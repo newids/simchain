@@ -52,19 +52,19 @@
           <input type="text" class="form-control" [(ngModel)]="block.time" readonly name="time">
         </div>
         <div class="col-sm-5">
-          <input type="text" class="form-control" [(ngModel)]="timestamp" readonly name="timestamp">
+          <input type="text" class="form-control" value="{{block.time | date}}" readonly name="timestamp">
         </div>
       </div>
       <div class="row form-group">
         <label class="col-sm-2 control-label">nBits</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" [(ngModel)]="block.nbits" readonly name="nbits">
+          <input type="text" class="form-control" [(ngModel)]="difficultyPrefix" readonly name="nbits">
         </div>
       </div>
       <div class="row form-group">
         <label class="col-sm-2 control-label">nonce</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" [(ngModel)]="block.nonce" name="nonce" readonly>
+          <input type="text" class="form-control" [(ngModel)]="nonce" name="nonce" readonly>
         </div>
       </div>
   </div>
@@ -108,37 +108,66 @@
   </div>
   <!-- / panel-heading -->
   <div class="panel-body">
-    <div class="row">
+    <div class="row form-group">
       <div class="col-sm-3">
         <button type="button" class="btn btn-primary btn-block" (click)="findNonce()">Find Nonce</button>
       </div>
+      <div class="col-sm-1">
+        <label class="col-sm-2 control-label">Timeout</label>
+      </div>
+      <div class="col-sm-2">
+        <input type="text" class="form-control" [(ngModel)]="timeout" name="timeout">
+      </div>
+      <div class="col-sm-1">
+        <label class="col-sm-2 control-label"> sec.</label>
+      </div>
+    </div>
+    <div class="row form-group">
+      <label class="col-sm-2 control-label">nonce</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" [(ngModel)]="nonce" name="nonce" readonly>
+      </div>
+    </div>
+    <div class="row form-group">
+      <label class="col-sm-2 control-label">hash</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" [(ngModel)]="newHash" name="nonce" readonly>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="row">
       <div class="col-sm-3">
         <button type="button" class="btn btn-primary btn-block" (click)="broadcast()">Broadcast</button>
       </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="row">
       <div class="col-sm-3">
         <button type="button" class="btn btn-primary btn-block" (click)="reload()">Reload</button>
       </div>
-      <div class="col-sm-3">
-        <button type="button" class="btn btn-primary btn-block" (click)="autoMode()">Auto Mode</button>
-      </div>
     </div>
     <!-- / .row -->
   </div>
   <!-- / .panel-body -->
 </div>
+<!--<div class="col-sm-3">-->
+<!--<button type="button" class="btn btn-primary btn-block" (click)="autoMode()">Auto Mode</button>-->
+<!--</div>-->
 
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h4 class="panel-title">Log</h4>
-  </div>
-  <!-- / panel-heading -->
-  <div class="panel-body">
-    <div class="row">
-      <div class="col-sm-12">
-        <textarea name="textLog" id="textLog" class="form-control" cols="30" rows="3">{{textLog}}</textarea>
-      </div>
-    </div>
-    <!-- / .row -->
-  </div>
-  <!-- / .panel-body -->
-</div>
+<!--<div class="panel panel-default">-->
+  <!--<div class="panel-heading">-->
+    <!--<h4 class="panel-title">Log</h4>-->
+  <!--</div>-->
+  <!--&lt;!&ndash; / panel-heading &ndash;&gt;-->
+  <!--<div class="panel-body">-->
+    <!--<div class="row">-->
+      <!--<div class="col-sm-12">-->
+        <!--<textarea name="textLog" id="textLog" class="form-control" cols="30" rows="3">{{textLog}}</textarea>-->
+      <!--</div>-->
+    <!--</div>-->
+    <!--&lt;!&ndash; / .row &ndash;&gt;-->
+  <!--</div>-->
+  <!--&lt;!&ndash; / .panel-body &ndash;&gt;-->
+<!--</div>-->
