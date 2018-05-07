@@ -1,7 +1,7 @@
 <div class="row">
   <!--<button class="btn btn-default" (click)="open(content)">{{title}}</button>-->
   <!--<a class="dropdown-item" href="javascript:void(0)" (click)="open(content)">-->
-    <!--<div (click)="open(content)"> <i class="fa fa-fw fa-user"></i> {{ 'Profile' | translate }}</div>-->
+  <!--<div (click)="open(content)"> <i class="fa fa-fw fa-user"></i> {{ 'Profile' | translate }}</div>-->
   <!--</a>-->
   <ng-template #content let-c="close" let-d="dismiss">
     <div class="modal-content modal-lg">
@@ -15,7 +15,8 @@
       <!-- modal-body -->
       <div class="modal-body">
 
-        <ngb-alert *ngIf="successMessage" type="success" (close)="successMessage = null">{{ successMessage }}</ngb-alert>
+        <ngb-alert *ngIf="successMessage" type="success" (close)="successMessage = null">{{ successMessage }}
+        </ngb-alert>
 
         <div class="col-sm-12">
           <div class="row breadcrumb">
@@ -24,66 +25,95 @@
           </div>
         </div>
 
-        <div class="col-sm-12">
-          <h4 class="panel-title">User Wallets</h4>
-          <!--https://swimlane.gitbook.io/ngx-datatable/installing-->
-          <ngx-datatable
-            #table
-            class="material"
-            [columns]="columns"
-            [columnMode]="'force'"
-            [headerHeight]="40"
-            [footerHeight]="40"
-            [rowHeight]="'auto'"
-            [limit]="10"
-            [rows]="rows"
-            (activate)="onActivate($event)">
-          </ngx-datatable>
-          <input
-            type='text'
-            style='padding:5px;margin:15px auto;width:70%;'
-            placeholder='Type to filter the Address...'
-            (keyup)='updateFilter($event)'
-          /> <i class="fa fa-search"></i>
-        </div>
-
-        <div class="col-sm-12">
-          <h4 class="panel-title">Transactions</h4>
-          <ngx-datatable
-            #table2
-            class="material"
-            [rows]="rows2"
-            [columns]="columns2"
-            [headerHeight]="40"
-            [footerHeight]="40"
-            [rowHeight]="'auto'"
-            (activate)="onActivate2($event)">
-          </ngx-datatable>
-          <input
-            type='text'
-            style='padding:5px;margin:15px auto;width:70%;'
-            placeholder='Type to filter the Address...'
-            (keyup)='updateFilter2($event)'
-          /> <i class="fa fa-search"></i>
-        </div>
-
-        <div class="wrap-btn col-sm-12" v-if="nodeNum == '0001'">
-          <div class="row">
-            <div class="col-sm-4">
-            <button class="btn btn-primary btn-block">Reset Password</button>
-          </div>
-            <div class="col-sm-4">
-              <button class="btn btn-primary btn-block">Delete User Data</button>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">User Wallets</h4>
+            <!--https://swimlane.gitbook.io/ngx-datatable/installing-->
+            <!-- / panel-heading -->
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-sm-12">
+                  <ngx-datatable
+                    #table
+                    class="material"
+                    [columns]="columns"
+                    [columnMode]="'force'"
+                    [headerHeight]="40"
+                    [footerHeight]="40"
+                    [rowHeight]="'auto'"
+                    [limit]="10"
+                    [rows]="rows"
+                    (activate)="onActivate($event)">
+                  </ngx-datatable>
+                  <input
+                    type='text'
+                    style='padding:5px;margin:15px auto;width:70%;'
+                    placeholder='Type to filter the Address...'
+                    (keyup)='updateFilter($event)'
+                  /> <i class="fa fa-search"></i>
+                </div>
+              </div>
+              <!-- / .row -->
             </div>
-            <div class="col-sm-4">
-              <button class="btn btn-primary btn-block">Delete User Account</button>
-            </div>
+            <!-- / .panel-body -->
           </div>
         </div>
-      </div>
-      <!-- modal-body -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="c('Close click')">Close</button>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Transactions</h4>
+          </div>
+          <!-- / panel-heading -->
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-sm-12">
+                <ngx-datatable
+                  #table_tx
+                  class="material"
+                  [rows]="rows_tx"
+                  [columns]="columns_tx"
+                  [headerHeight]="40"
+                  [footerHeight]="40"
+                  [rowHeight]="auto"
+                  [columnMode]="'flex'"></ngx-datatable>
+                <input
+                  type='text'
+                  style='padding:5px;margin:15px auto;width:90%;'
+                  placeholder='Type to filter the Address...'
+                  (keyup)='updateFilter2($event)'
+                /> <i class="fa fa-search"></i>
+              </div>
+            </div>
+            <!-- / .row -->
+          </div>
+          <!-- / .panel-body -->
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Root Menu</h4>
+          </div>
+          <!-- / panel-heading -->
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-sm-4">
+                <button class="btn btn-primary btn-block">Reset Password</button>
+              </div>
+              <div class="col-sm-4">
+                <button class="btn btn-primary btn-block">Delete User Data</button>
+              </div>
+              <div class="col-sm-4">
+                <button class="btn btn-primary btn-block">Delete User Account</button>
+              </div>
+            </div>
+            <!-- / .row -->
+          </div>
+          <!-- / .panel-body -->
+        </div>
+        <!-- modal-body -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="c('Close click')">Close</button>
+        </div>
       </div>
     </div>
   </ng-template>

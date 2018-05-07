@@ -22,24 +22,12 @@
 				<button class="btn btn-outline-secondary btn-paste" type="button" (click)="getMyAddress()"><i
           class="fa fa-key"></i> Get Address</button>
     </span>
-    <span class="input-group-btn">
-				<button class="btn btn-outline-secondary btn-paste" type="button" data-clipboard-target="#private-key"><i
-          class="fa fa-paste"></i> Paste</button>
-    </span>
   </div>
 </div>
 <div class="form-group">
   <label>To</label>
   <div class="input-group">
     <input type="text" class="form-control" [(ngModel)]="to" name="to">
-    <span class="input-group-btn">
-				<button class="btn btn-outline-secondary btn-paste" type="button" data-clipboard-target="#private-key"><i
-          class="fa fa-paste"></i> Paste</button>
-    </span>
-    <span class="input-group-btn">
-				<button class="btn btn-outline-secondary btn-paste" type="button" data-clipboard-target="#private-key"><i
-          class="fa fa-paste"></i> Paste</button>
-    </span>
   </div>
 </div>
 <div class="form-group">
@@ -51,9 +39,9 @@
 </div>
 <div class="form-group">
   <label>Data</label>
-  <!--<textarea cols="30" rows="11" class="form-control" readonly>{{ tx | json:4 }}</textarea>-->
-  <!--<pre>{{ tx | json:4 }}</pre>-->
-  <prettyjson [obj]="tx"></prettyjson>
+  <textarea cols="30" rows="6" class="form-control" readonly>{{ tx | json:8 }}</textarea>
+  <!--<pre [innerHtml]="tx | prettyjson:3"></pre>-->
+  <!--<prettyjson [obj]="tx"></prettyjson>-->
 </div>
 <div class="form-group">
   <label>Key</label>

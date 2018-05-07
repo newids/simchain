@@ -36,7 +36,7 @@ export class TxService {
       .then(response => {
         console.log('response:', response);
         console.log('response.data', response.data);
-        return response.data
+        return response.data;
       })
       .catch(this.utilService.handleApiError);
   }
@@ -48,7 +48,7 @@ export class TxService {
       .then(response => {
         console.log('response:', response);
         console.log('response.data', response.data);
-        return response.data as Tx;
+        return response.data as Tx[];
       })
       .catch(this.utilService.handleApiError);
   }
@@ -60,7 +60,7 @@ export class TxService {
       .then(response => {
         console.log('response:', response);
         console.log('response.data', response.data);
-        return response.data as Tx;
+        return response.data as Tx[];
       })
       .catch(this.utilService.handleApiError);
   }
@@ -72,7 +72,7 @@ export class TxService {
       .then(response => {
         console.log('response:', response);
         console.log('response.data', response.data);
-        return response.data as Tx;
+        return response.data as Tx[];
       })
       .catch(this.utilService.handleApiError);
   }

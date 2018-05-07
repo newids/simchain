@@ -44,6 +44,7 @@ export class AuthService {
         localStorage.setItem('token', response.token);
         localStorage.setItem('node_number', response.node_number);
         localStorage.setItem('email', response.email);
+        localStorage.setItem('nbits', '0000');
       })
       .catch(this.utilService.handleApiError);
   }

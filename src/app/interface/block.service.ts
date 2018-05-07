@@ -20,11 +20,23 @@ export class BlockService {
     private utilService: UtilService,
   ) {}
 
-  create__request(block: Block): Promise<string> {
-    return this.http.post<ApiResponse>(`${this.apiBaseUrl}/requests`, block)
+  create_a_block(block: Block): Promise<string> {
+    return this.http.post<ApiResponse>(`${this.apiBaseUrl}`, block)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
+        return response.data as Block;
+      })
+      .catch(this.utilService.handleApiError);
+  }
+
+  get_blocks(): Promise<Block[]> {
+    return this.http.get<ApiResponse>(`${this.apiBaseUrl}/`)
+      .toPromise()
+      .then(this.utilService.checkSuccess)
+      .then(response => {
+        console.log('response:', response);
+        console.log('response.data', response.data);
         return response.data as Block;
       })
       .catch(this.utilService.handleApiError);

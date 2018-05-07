@@ -5,6 +5,7 @@ import {Key} from '../../interface/key.interface';
 import {KeyService} from '../../interface/key.service';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {DetailviewComponent} from '../detailview/detailview.component';
+import {TxService} from '../../interface/tx.service';
 
 @Component({
   selector: 'app-pop-user',
@@ -25,22 +26,20 @@ export class PopUserComponent implements OnInit {
   // https://ng-bootstrap.github.io/#/components/modal/examples
   @ViewChild(DetailviewComponent) child: DetailviewComponent;
 
+  columns = [
+    {prop: 'address'},
+    {name: 'amount'}
+  ];
   rows = [];
 
-  columns = [
-    { prop: 'address' },
-    { name: 'amount' }
+  columns_tx = [
+    {name: 'Height', prop: 'height', flexGrow: 1},
+    {name: 'From', prop: 'from', flexGrow: 3},
+    {name: 'To', prop: 'to', flexGrow: 3},
+    {name: 'Amount', prop: 'amount', flexGrow: 1},
+    {name: 'Time', prop: 'created_date', flexGrow: 2},
   ];
-
-  rows2 = [];
-  temp2 = [];
-
-  columns2 = [
-    { prop: 'time' },
-    { name: 'from' },
-    { name: 'to' },
-    { name: 'amount' },
-  ];
+  rows_tx = [];
 
   detail_view_title: string;
   detail_view_content: string;
@@ -48,7 +47,11 @@ export class PopUserComponent implements OnInit {
   // https://swimlane.gitbook.io/ngx-datatable/api/column/inputs
   @ViewChild(DatatableComponent) table: DatatableComponent;
 
-  constructor(public modalService: NgbModal, private keyService: KeyService) {
+  constructor(
+    public modalService: NgbModal,
+    private keyService: KeyService,
+    private txService: TxService
+  ) {
   }
 
   ngOnInit() {
@@ -103,6 +106,22 @@ export class PopUserComponent implements OnInit {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
     console.log('open(content) 2');
+
+    try {
+      this.rows_tx = [];
+      this.txService.get_tx_node(this.node_number)
+        .then(tx => {
+          this.rows_tx.push(...tx);
+          this.rows_tx = [...this.rows_tx];
+          console.log('tx: ', tx);
+          console.log('this.rows_tx: ', this.rows_tx);
+        })
+        .catch(error => {
+          console.log('error: ', error.toLocaleString());
+        });
+    } catch (e) {
+      console.log('Exception: ', e.toLocaleString());
+    }
   }
 
   private getDismissReason(reason: any): string {
@@ -120,7 +139,7 @@ export class PopUserComponent implements OnInit {
     const val = event.target.value.toLowerCase();
 
     // filter our data
-    const temp = this.keyList.filter(function(d) {
+    const temp = this.keyList.filter(function (d) {
       return d.address.toLowerCase().indexOf(val) !== -1 || !val;
     });
 
@@ -134,7 +153,7 @@ export class PopUserComponent implements OnInit {
     const val = event.target.value.toLowerCase();
 
     // filter our data
-    const temp = this.keyList.filter(function(d) {
+    const temp = this.keyList.filter(function (d) {
       return d.address.toLowerCase().indexOf(val) !== -1 || !val;
     });
 

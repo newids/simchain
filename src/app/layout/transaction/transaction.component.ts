@@ -37,12 +37,10 @@ export class TransactionComponent implements OnInit {
 
   generate() {
     this.tx = new Tx({
-      height: -1,
-      hash_pointer: '',
       from: this.from,
       to: this.to,
       amount: this.amount,
-      created_date: Date.now(),
+      created_date: Date.now().toString(16),
     });
 
     // this.tx_raw = JSON.stringify(tx);
@@ -88,9 +86,9 @@ export class TransactionComponent implements OnInit {
     try {
       this.txService.get_address_balance(this.from)
         .then((data) => {
-          const balance = data[0]['total'];
+          const balance = data[0]['balance'];
           console.log('data: ', data);
-          console.log('data.total: ', data[0]['total']);
+          console.log('balance: ', balance);
           console.log('this.amount: ', this.amount);
           if (balance >= this.amount) {
             this.save_request();
@@ -109,13 +107,12 @@ export class TransactionComponent implements OnInit {
   save_request() {
     const newTx = new Tx({
       height: -1,
-      hash_pointer: 'hash_pointer',
+      hash_pointer: this.signature,
       from: this.from,
       from_node: localStorage.getItem('node_number'),
       to: this.to,
       to_node: 'unknown',
       amount: this.amount,
-      created_date: this.tx.created_date,
     });
 
     try {

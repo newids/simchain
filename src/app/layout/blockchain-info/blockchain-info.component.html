@@ -14,47 +14,40 @@
 </div>
 <!-- / desc -->
 
-<form class="form-horizontal" (click)="callback()">
-  <div class="form-group">
-    <div class="col-sm-2">
-      <button type="button" class="btn btn-outline-secondary btn-block" (click)="callback()"><i class="fa fa-trash"></i> Clear</button>
-    </div>
-    <div class="col-sm-10">
-      <div class="input-group">
-        <input type="text" class="form-control" [(ngModel)]="sb" placeholder="Search...">
-        <div class="input-group-btn">
-          <button type="submit" class="btn btn-default"><i class="fa fa-search"></i> Search</button>
-        </div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title">Blocks</h4>
+  </div>
+  <!-- / panel-heading -->
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-12">
+        <ngx-datatable
+          #table_blocks
+          class="material"
+          [rows]="rows_blocks"
+          [columns]="columns_blocks"
+          [headerHeight]="40"
+          [footerHeight]="40"
+          [rowHeight]="auto"
+          [columnMode]="'flex'"
+          [limit]="5"
+          [selected]="selected"
+          [selectionType]="'single'"
+          (select)="onSelect($event)"
+          (activate)="onActivate($event)"></ngx-datatable>
+        <input
+          type='text'
+          style='padding:5px;margin:15px auto;width:90%;'
+          placeholder='Type to filter the height or hash ...'
+          (keyup)='updateFilter($event)'
+        /> <i class="fa fa-search"></i>
       </div>
     </div>
+    <!-- / .row -->
+    <!-- / .panel-body -->
   </div>
-</form>
-
-<table class="table table-bordered table-striped table-hover">
-  <caption></caption>
-  <colgroup>
-    <col>
-  </colgroup>
-  <thead>
-  <tr>
-    <th scope="col">Height</th>
-    <th scope="col">Time</th>
-    <th scope="col">Relayed</th>
-    <th scope="col">Hash</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr v-if="block == ''">
-    <td colspan="4" class="nodata">No Data</td>
-  </tr>
-  <tr v-else v-for="item in block" (click)="callback()">
-    <td>{{ item.height }}</td>
-    <td>{{ item.time }}</td>
-    <td>{{ item.relayed }}</td>
-    <td>{{ item.hash }}</td>
-  </tr>
-  </tbody>
-</table>
+</div>
 
 <div class="panel panel-primary">
   <div class="panel-heading">
@@ -63,91 +56,89 @@
   <!-- / panel-header -->
 
   <div class="panel-body">
-    <form class="form-horizontal">
-      <div class="form-group">
-        <label class="col-sm-2 control-label">version</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" [(ngModel)]="header.version" readonly>
-        </div>
+    <div class="row form-group">
+      <label class="col-sm-2 control-label">height</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" [(ngModel)]="newBlock.height" readonly name="version">
       </div>
-      <div class="form-group">
-        <label class="col-sm-2 control-label">prev hash</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" [(ngModel)]="header.prev_hash" readonly>
-        </div>
+    </div>
+    <div class="row form-group">
+      <label class="col-sm-2 control-label">hash</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" [(ngModel)]="hash" name="hash" readonly>
       </div>
-      <div class="form-group">
-        <label class="col-sm-2 control-label">merkle root</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" [(ngModel)]="header.merkle_root" readonly>
-        </div>
+    </div>
+    <div class="row form-group">
+      <label class="col-sm-2 control-label">version</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" [(ngModel)]="version" readonly name="version">
       </div>
-      <div class="form-group">
-        <label class="col-sm-2 control-label">time</label>
-        <div class="col-sm-5">
-          <input type="text" class="form-control" [(ngModel)]="header.time" readonly>
-        </div>
-        <div class="col-sm-5">
-          <span class="form-control disabled">{{ header.time | date:'yyyy-MM-dd HH:mm a z':'+0900' }}</span>
-        </div>
+    </div>
+    <div class="row form-group">
+      <label class="col-sm-2 control-label">prev hash</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" [(ngModel)]="newBlock.prev_hash" readonly name="prev_hash">
       </div>
-      <div class="form-group">
-        <label class="col-sm-2 control-label">nBits</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" [(ngModel)]="header.nbits" readonly>
-        </div>
+    </div>
+    <div class="row form-group">
+      <label class="col-sm-2 control-label">merkle root</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" [(ngModel)]="newBlock.merkle_root" readonly name="merkle_root">
       </div>
-      <div class="form-group">
-        <label class="col-sm-2 control-label">nonce</label>
-        <div class="col-sm-10">
-          <div class="input-group">
-            <input type="text" class="form-control" [(ngModel)]="header.nonce" readonly>
-            <span class="input-group-btn">
-									<button type="button" class="btn btn-default" (click)="callback()">raw</button>
-								</span>
-          </div>
-        </div>
+    </div>
+    <div class="row form-group">
+      <label class="col-sm-2 control-label">time</label>
+      <div class="col-sm-5">
+        <input type="text" class="form-control" [(ngModel)]="newBlock.time" readonly name="time">
       </div>
-    </form>
+      <div class="col-sm-5">
+        <input type="text" class="form-control" value="{{timestamp | date: 'yyyy-MM-dd hh:mm:ss'}}" readonly
+               name="timestamp">
+      </div>
+    </div>
+    <div class="row form-group">
+      <label class="col-sm-2 control-label">nBits</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" [(ngModel)]="newBlock.nbits" readonly name="nbits">
+      </div>
+    </div>
+    <div class="row form-group">
+      <label class="col-sm-2 control-label">nonce</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" [(ngModel)]="newBlock.nonce" name="nonce" readonly>
+      </div>
+    </div>
   </div>
   <!-- / panel-body -->
 </div>
 <!-- / panel -->
 
-<div class="panel panel-info">
+<div class="panel panel-default">
   <div class="panel-heading">
     <h4 class="panel-title">Transactions</h4>
   </div>
-  <!-- / .panel-heading -->
+  <!-- / panel-heading -->
   <div class="panel-body">
-    <table class="table table-bordered table-striped table-hover">
-      <caption></caption>
-      <colgroup>
-        <col>
-      </colgroup>
-      <thead>
-      <tr>
-        <th scope="col">No</th>
-        <th scope="col">Hash Pointer</th>
-        <th scope="col">From</th>
-        <th scope="col">To</th>
-        <th scope="col">Amount</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-if="tx == ''">
-        <td colspan="5" class="nodata">No Data</td>
-      </tr>
-      <tr v-else v-for="(item, index) in tx">
-        <td>{{ index }}</td>
-        <td>{{ item.hash_pointer }}</td>
-        <td>{{ item.from }}</td>
-        <td>{{ item.to }}</td>
-        <td>{{ item.amount }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <div class="row">
+      <div class="col-sm-12">
+        <ngx-datatable
+          #table_tx
+          class="material"
+          [rows]="rows_tx"
+          [columns]="columns_tx"
+          [headerHeight]="40"
+          [footerHeight]="40"
+          [rowHeight]="auto"
+          [columnMode]="'flex'"></ngx-datatable>
+        <input
+          type='text'
+          style='padding:5px;margin:15px auto;width:90%;'
+          placeholder='Type to filter the Address...'
+          (keyup)='updateFilter2($event)'
+        /> <i class="fa fa-search"></i>
+      </div>
+    </div>
+    <!-- / .row -->
   </div>
   <!-- / .panel-body -->
 </div>
-<!-- / .panel panel-info -->

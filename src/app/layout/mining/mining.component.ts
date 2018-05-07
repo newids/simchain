@@ -1,11 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Block} from './block.interface';
-import {Transaction} from '../transaction/transaction.interface';
 import {BlockService} from '../../interface/block.service';
 import {KeyService} from '../../interface/key.service';
 import {TxService} from '../../interface/tx.service';
 import * as CryptoJS from 'crypto-js';
-import {D} from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-mining',
@@ -14,12 +12,13 @@ import {D} from '@angular/core/src/render3';
 })
 export class MiningComponent implements OnInit {
   version = '02000000';
-  block: Block;
-  transaction: Transaction;
+  oldBlock: Block;
+  newBlock: Block;
   index = '';
   keyList;
   address = '';
   node_number = '';
+  timestamp: number;
   difficultyPrefix = '0000';
   nonce = 0;
   newHash = '';
@@ -27,9 +26,9 @@ export class MiningComponent implements OnInit {
   logginMode = false;
 
   columns_tx = [
-    {name: 'From', prop: 'from', flexGlow: 3},
-    {name: 'To', prop: 'to', flexGlow: 3},
-    {name: 'Amount', prop: 'amount', flexGlow: 1}
+    {name: 'From', prop: 'from', flexGrow: 2},
+    {name: 'To', prop: 'to', flexGrow: 2},
+    {name: 'Amount', prop: 'amount', flexGrow: 1}
   ];
   rows_tx = [];
 
@@ -43,14 +42,33 @@ export class MiningComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.block = new Block({
-      _id: '0', prev_hash: '0',
+    this.node_number = localStorage.getItem('node_number');
+    this.timestamp = Date.now();
+    this.newBlock = new Block ({
+      height: -1,
+      node_number: this.node_number,
+      address: '',
+      prev_hash: '',
+      merkle_root: '',
+      time: this.timestamp.toString(16),
+      nbits: this.difficultyPrefix,
+      nonce:  (0).toString(16)
     });
 
     try {
       this.blockService.get_latest_block()
         .then(block => {
-          this.block = block[0];
+          this.oldBlock = block[0];
+          this.newBlock.height = this.oldBlock.height + 1;
+          const headerData = [
+            this.version,
+            this.oldBlock.prev_hash,
+            this.oldBlock.merkle_root,
+            this.oldBlock.time,
+            this.oldBlock.nbits,
+            this.oldBlock.nonce].join('');
+          this.newBlock.prev_hash = CryptoJS.SHA256(headerData).toString();
+          this.newBlock.merkle_root = CryptoJS.SHA256((this.oldBlock.height + 1).toString(16)).toString();
         })
         .catch(error => {
           console.log('error:', error);
@@ -59,17 +77,12 @@ export class MiningComponent implements OnInit {
       console.log('error: ', e.toLocaleString());
     }
 
-    this.transaction = new Transaction({
-      _id: '0',
-    });
-
     try {
-      this.node_number = localStorage.getItem('node_number');
-
       this.keyService.get_key_node(this.node_number)
         .then(keyList => {
           this.keyList = keyList;
           this.address = keyList[0].address;
+          this.newBlock.address = this.address;
           console.log('keyList: ', keyList);
           console.log('this.address: ', this.address);
 
@@ -94,7 +107,6 @@ export class MiningComponent implements OnInit {
       to: this.address,
       to_node: this.node_number,
       amount: 50,
-      created_date: Date,
     }];
 
     try {
@@ -119,12 +131,21 @@ export class MiningComponent implements OnInit {
 
   findNonce() {
     const start = Date.now();
-    for (let nonce = 0, headerHash = '9999'; Date.now() - start < this.timeout * 1000 ; nonce++) {
-      const headerData = [this.version, this.block.prev_hash, this.block.merkle_root, this.block.time, this.block.nbits, nonce].join('');
+    this.nonce = 0;
+    for (let headerHash = '9999'; Date.now() - start < this.timeout * 1000 ; this.nonce++) {
+      this.timestamp = Date.now();
+      this.newBlock.time = this.timestamp.toString(16);
+      const headerData = [
+        this.version,
+        this.newBlock.prev_hash,
+        this.newBlock.merkle_root,
+        this.newBlock.time,
+        this.newBlock.nbits,
+        this.nonce.toString(16)].join('');
       headerHash = CryptoJS.SHA256(headerData).toString();
-      console.log(nonce, headerHash);
+      console.log(this.nonce, headerHash);
       if (this.validateHash(headerHash)) {
-        this.nonce = nonce;
+        this.newBlock.nonce = this.nonce.toString(16);
         this.newHash = headerHash;
         break;
       }
@@ -134,12 +155,26 @@ export class MiningComponent implements OnInit {
 
 
   broadcast() {
+    try {
+      this.blockService.create_a_block(this.newBlock)
+        .then(block => {
+          const aBlock = block[0];
+          console.log('Succeed to create new block.', aBlock);
+        })
+        .catch(error => {
+          console.log('error:', error);
+        });
+    } catch (e) {
+      console.log('error: ', e.toLocaleString());
+    }
 
   }
+
 
   reload() {
 
   }
+
 
   updateFilter2(event) {
 
