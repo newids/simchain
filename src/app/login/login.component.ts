@@ -61,19 +61,31 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.username = '';
+    this.password = '';
+    localStorage.setItem('isLoggedin', 'false');
+    localStorage.setItem('token', '');
+    localStorage.setItem('node_number', '');
+    localStorage.setItem('email', '');
+    localStorage.setItem('currentUser', null);
   }
 
   onLoggedin() {
-    this.authService.login(this.username, this.password) //5-2
+    this.authService.login(this.username, this.password)
       .then(data => {
-        this.router.navigate([this.redirectTo ? this.redirectTo : '/main']); //5-3
+        this.router.navigate([this.redirectTo ? this.redirectTo : '/main']);
         localStorage.setItem('isLoggedin', 'true');
         console.log('onLoggedin', '----------------------------');
       })
       .catch(response => {
         this.errorResponse = response;
         // this.utilService.handleFormSubmitError(this.errorResponse, this.form, this.formErrors); //5-4
-        localStorage.removeItem('isLoggedin');
+        localStorage.setItem('isLoggedin', 'false');
+        localStorage.setItem('token', '');
+        localStorage.setItem('node_number', '');
+        localStorage.setItem('email', '');
+        localStorage.setItem('currentUser', null);
+        console.log('this.errorResponse: ', this.errorResponse);
         console.log('onLoggedOut', '------------');
       });
     // TODO: make login process

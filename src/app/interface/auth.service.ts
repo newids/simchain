@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   login(username: string, password: string): Promise<any> {
-    let body = new URLSearchParams();
+    const body = new URLSearchParams();
     body.set('email', username);
     body.set('password', password);
 
@@ -41,6 +41,7 @@ export class AuthService {
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
+        localStorage.setItem('isLoggedin', 'true');
         localStorage.setItem('token', response.token);
         localStorage.setItem('node_number', response.node_number);
         localStorage.setItem('email', response.email);
@@ -58,25 +59,31 @@ export class AuthService {
         return response.data as User;
       })
       .catch(response => {
-        this.logout();
+        console.log('refresh().catch(response) : ', response);
         return this.utilService.handleApiError(response);
       });
   }
 
   refresh(): Promise<any> {
+    if (localStorage.getItem('isLoggedin') !== 'true') {
+      return this.utilService.handleApiError('');
+    }
+
     return this.http.get<ApiResponse>(`${this.apiBaseUrl}/refresh`)
       .toPromise()
       .then(this.utilService.checkSuccess)
       .then(response => {
+        localStorage.setItem('isLoggedin', 'true');
         localStorage.setItem('token', response.token);
         localStorage.setItem('node_number', response.node_number);
         localStorage.setItem('email', response.email);
+        localStorage.setItem('nbits', '0000');
         if (!this.getCurrentUser()) {
           return this.me();
         }
       })
       .catch(response => {
-        this.logout();
+        console.log('refresh().catch(response) : ', response);
         return this.utilService.handleApiError(response);
       });
   }
@@ -91,15 +98,15 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     const token = localStorage.getItem('token');
-    // Check whether the token is expired and return
-    // true or false
-    return !this.jwtHelper.isTokenExpired(token);
-    // return (token ? true : false);
-    // if (token) {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
+    console.log('token: ', token);
+    if (token) {
+      console.log('!this.jwtHelper.isTokenExpired(token): ', !this.jwtHelper.isTokenExpired(token));
+      // Check whether the token is expired and return
+      return !this.jwtHelper.isTokenExpired(token);
+    } else {
+      console.log('return false.');
+      return false;
+    }
   }
 
   isAuthenticated(): boolean {
@@ -107,10 +114,11 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('node_number');
-    localStorage.removeItem('email');
-    localStorage.removeItem('currentUser');
+    localStorage.setItem('isLoggedin', 'false');
+    localStorage.setItem('token', '');
+    localStorage.setItem('node_number', '');
+    localStorage.setItem('email', '');
+    localStorage.setItem('currentUser', null);
     this.router.navigate(['/']);
   }
 }

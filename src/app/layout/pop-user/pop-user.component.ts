@@ -1,6 +1,5 @@
 import {Component, Input, Output, OnChanges, OnInit, SimpleChange, ViewChild} from '@angular/core';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
-import {Transaction} from '../transaction/transaction.interface';
 import {Key} from '../../interface/key.interface';
 import {KeyService} from '../../interface/key.service';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
@@ -16,7 +15,6 @@ export class PopUserComponent implements OnInit {
   closeResult: string;
   @Input() node_number: string;
   email: string;
-  transaction: Transaction;
   key: Key;
   keyList: Key[];
   columns_key = [];
@@ -46,6 +44,7 @@ export class PopUserComponent implements OnInit {
 
   // https://swimlane.gitbook.io/ngx-datatable/api/column/inputs
   @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent) table_tx: DatatableComponent;
 
   constructor(
     public modalService: NgbModal,
@@ -58,11 +57,6 @@ export class PopUserComponent implements OnInit {
     this.key = new Key({
       _id: '0',
     });
-
-    this.transaction = new Transaction({
-      _id: '0',
-    });
-    console.log('ngOnInit');
   }
 
   fetch(cb) {
@@ -160,7 +154,7 @@ export class PopUserComponent implements OnInit {
     // update the rows
     this.rows = temp;
     // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
+    this.table_tx.offset = 0;
   }
 
   onActivate(event) {

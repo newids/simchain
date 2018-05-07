@@ -53,11 +53,15 @@ export class HeaderComponent implements OnInit {
   }
 
   onLoggedout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('node_number');
-    localStorage.removeItem('email');
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('isLoggedin');
+    this.node_number = '';
+    this.email = '';
+    localStorage.setItem('isLoggedin', 'false');
+    localStorage.setItem('token', '');
+    localStorage.setItem('node_number', '');
+    localStorage.setItem('email', '');
+    localStorage.setItem('currentUser', null);
+    console.log('Logged out.');
+    this.router.navigate(['/login']);
   }
 
   changeLang(language: string) {
