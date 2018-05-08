@@ -7,6 +7,8 @@ import {ApiResponse} from '../interface/api-response';
 
 import {UtilService} from '../interface/util.service';
 import {AuthService} from '../interface/auth.service';
+import {Subject} from 'rxjs/Subject';
+import {debounceTime} from 'rxjs/operator/debounceTime';
 
 // IF ERROR: Can't bind to 'ngModel' since it isn't a known property of 'input'
 // ---> ADD FormsModule at ***.module.ts :::  import { FormsModule } from '@angular/forms';
@@ -48,6 +50,16 @@ export class LoginComponent implements OnInit {
   //     this.utilService.updateFormErrors(this.form, this.formErrors, this.formErrorMessages);
   //   });
   // };
+  public isCollapsed = true;
+
+  private _alert = new Subject<string>();
+  alertMessage: string;
+  // this._alert.next(`Error: ${new Date()} - ${e.toLocaleString()}`);
+  // this.alert();
+  alert() {
+    // this._alert.subscribe((message) => this.alertMessage = message);
+    // debounceTime.call(this._alert, 5000).subscribe(() => this.alertMessage = null);
+  }
 
   constructor(
     private router: Router,
@@ -61,6 +73,17 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    // this.alertMessage = '';
+    // this._alert.next('');
+    // this.alert();
+    // this._alert.next(null);
+    this.alertMessage = '';
+    this.isCollapsed = false;
+    this._alert.subscribe((message) => this.alertMessage = message);
+    debounceTime.call(this._alert, 5000).subscribe(() => {
+      this.alertMessage = null;
+      this.isCollapsed = true;
+    });
     this.username = '';
     this.password = '';
     localStorage.setItem('isLoggedin', 'false');
@@ -79,7 +102,16 @@ export class LoginComponent implements OnInit {
       })
       .catch(response => {
         this.errorResponse = response;
-        // this.utilService.handleFormSubmitError(this.errorResponse, this.form, this.formErrors); //5-4
+        // this._alert.next(`Error: ${new Date()} - ${response.status} : ${response.statusText}`);
+        this._alert.next('Error: e-mail 또는 password 를 확인해 주십시오.');
+        this._alert.subscribe((message) => {
+          this.alertMessage = message;
+          this.isCollapsed = false;
+        });
+        debounceTime.call(this._alert, 5000).subscribe(() => {
+          this.alertMessage = null;
+          this.isCollapsed = true;
+        });
         localStorage.setItem('isLoggedin', 'false');
         localStorage.setItem('token', '');
         localStorage.setItem('node_number', '');
@@ -88,26 +120,6 @@ export class LoginComponent implements OnInit {
         console.log('this.errorResponse: ', this.errorResponse);
         console.log('onLoggedOut', '------------');
       });
-    // TODO: make login process
-    // email & password was empty...
-    // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YWRlMThmOGRiYWIzMjQxMzY4NmQ4OTYiLCJub2RlX251bWJlciI6Ijg5IiwiZXhwIjoxNTI1MTA5NjI0LCJpYXQiOjE1MjQ1MDQ4MjR9.NbhySnpyoJGax1tvCKEjBiKMPedMlGPPvYUTq3PX-SI
-    // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YWRlMTk4ZTk2NDFlZDQxODI5MGU5NzIiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJub2RlX251bWJlciI6IjUyNiIsImV4cCI6MTUyNTEwOTc3NCwiaWF0IjoxNTI0NTA0OTc0fQ.ZG7zUmyACw6HztrM5Uhl56JuzwZr9nWuVo9zbGOaKcw
-    // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YWRlMTk4ZTk2NDFlZDQxODI5MGU5NzIiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJub2RlX251bWJlciI6IjUyNiIsImV4cCI6MTUyNTExMDAzMiwiaWF0IjoxNTI0NTA1MjMyfQ.WjB21WatdfrAQoAO2q7x37J2K0KoO7DQ9ayi-dX5NfI
-    // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YWRlMWI0NDk2NDFlZDQxODI5MGU5NzMiLCJlbWFpbCI6IiIsIm5vZGVfbnVtYmVyIjoiNjQ1NiIsImV4cCI6MTUyNTExMDIxMiwiaWF0IjoxNTI0NTA1NDEyfQ.Z57JbdKiwR5p2FF9MKBn44kFz4USZx38HdqQkB4aLIw
   }
-
-  // submit() {
-  //   this.utilService.makeFormDirtyAndUpdateErrors(this.form, this.formErrors, this.formErrorMessages); //5-1
-  //   if (this.form.valid) {
-  //     this.authService.login(this.form.value.username, this.form.value.password) //5-2
-  //       .then(data => {
-  //         this.router.navigate([this.redirectTo ? this.redirectTo : '/']); //5-3
-  //       })
-  //       .catch(response => {
-  //         this.errorResponse = response;
-  //         this.utilService.handleFormSubmitError(this.errorResponse, this.form, this.formErrors); //5-4
-  //       });
-  //   }
-  // }
 
 }

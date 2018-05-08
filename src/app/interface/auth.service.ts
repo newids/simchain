@@ -50,6 +50,30 @@ export class AuthService {
       .catch(this.utilService.handleApiError);
   }
 
+  register(username: string, password: string): Promise<any> {
+    const body = new URLSearchParams();
+    body.set('email', username);
+    body.set('password', password);
+
+    const options = {
+      headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
+    };
+
+    // return this.http.post<ApiResponse>(`${this.apiBaseUrl}/login`, {email: username, password: password})
+    return this.http
+      .post(`${this.apiBaseUrl}/register`, body.toString(), options)
+      .toPromise()
+      .then(this.utilService.checkSuccess)
+      .then(response => {
+        localStorage.setItem('isLoggedin', 'true');
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('node_number', response.node_number);
+        localStorage.setItem('email', response.email);
+        localStorage.setItem('nbits', '0000');
+      })
+      .catch(this.utilService.handleApiError);
+  }
+
   me(): Promise<User> {
     return this.http.get<ApiResponse>(`${this.apiBaseUrl}/me`)
       .toPromise()
@@ -59,7 +83,7 @@ export class AuthService {
         return response.data as User;
       })
       .catch(response => {
-        console.log('refresh().catch(response) : ', response);
+        console.log('me().catch(response) : ', response);
         return this.utilService.handleApiError(response);
       });
   }

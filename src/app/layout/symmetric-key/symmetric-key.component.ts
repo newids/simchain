@@ -20,9 +20,10 @@ export class SymmetricKeyComponent implements OnInit {
   passphrase2: string;
   txtCiphertext2: string;
   txtPlaintext2: string;
-  alertMessage: string;
   lenPlaintext;
   lenCiphertext;
+
+  alertMessage: string;
   private _alert = new Subject<string>();
 
   alert() {

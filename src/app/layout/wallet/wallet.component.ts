@@ -19,7 +19,7 @@ export class WalletComponent implements OnInit {
   wifValue = '';
   addressValue = '';
   keyPair: ECPair;
-  alertMessage: string = '';
+  alertMessage: string = null;
   private _alert: Subject<string>;
 
   alert() {

@@ -21,6 +21,7 @@ import {KeyService} from './interface/key.service';
 import {TxService} from './interface/tx.service';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {BlockService} from './interface/block.service';
+import {NgbAlertModule, NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
 
 // AoT requires an exported function for factories
 export function createTranslateLoader(http: HttpClient) {
@@ -40,6 +41,8 @@ export function tokenGetter() {
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    NgbAlertModule.forRoot(),
+    NgbCollapseModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
