@@ -50,16 +50,16 @@ export class AuthService {
       .catch(this.utilService.handleApiError);
   }
 
-  register(username: string, password: string): Promise<any> {
+  register(email: string, password: string): Promise<any> {
     const body = new URLSearchParams();
-    body.set('email', username);
+    body.set('email', email);
     body.set('password', password);
 
     const options = {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     };
 
-    // return this.http.post<ApiResponse>(`${this.apiBaseUrl}/login`, {email: username, password: password})
+    // return this.http.post<ApiResponse>(`${this.apiBaseUrl}/login`, {email: email, password: password})
     return this.http
       .post(`${this.apiBaseUrl}/register`, body.toString(), options)
       .toPromise()

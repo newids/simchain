@@ -22,6 +22,7 @@ import {TxService} from './interface/tx.service';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {BlockService} from './interface/block.service';
 import {NgbAlertModule, NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
+import {FormBuilder, FormsModule} from '@angular/forms';
 
 // AoT requires an exported function for factories
 export function createTranslateLoader(http: HttpClient) {
@@ -41,6 +42,7 @@ export function tokenGetter() {
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    FormsModule,
     NgbAlertModule.forRoot(),
     NgbCollapseModule.forRoot(),
     TranslateModule.forRoot({
@@ -64,7 +66,7 @@ export function tokenGetter() {
   declarations: [AppComponent],
   providers: [
     AuthGuard, UtilService, AuthService, JwtHelperService,
-    KeyService, TxService, BlockService,
+    KeyService, TxService, BlockService, FormBuilder,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: RequestInterceptor,

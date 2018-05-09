@@ -3,26 +3,34 @@
     <div class="col-md-4">
       <img src="assets/images/logo.png" width="150px" class="user-avatar"/>
       <h1>Blockchain Simulator</h1>
-      <form role="form">
+      <form [formGroup]="form" (ngSubmit)="onLoggedin()" class="login-form form-horizontal">
         <div class="form-content">
-          <div class="form-group">
+          <fieldset>
+          <div class="form-group" [ngClass]="{'has-error': formErrors.email}">
             <input type="text" ng-model="name" class="form-control input-underline input-lg" id="username"
-                   placeholder="Email" [(ngModel)]="username" name="username" email>
+                   placeholder="Email" name="username" formControlName="email">
+            <span *ngIf="formErrors.email" class="help-block">{{formErrors.email}}</span>
           </div>
 
-          <div class="form-group">
-            <input type="password" class="form-control input-underline input-lg" id="password" placeholder="Password"
-                   [(ngModel)]="password" name="password">
+          <div class="form-group" [ngClass]="{'has-error': formErrors.password}">
+            <input type="password" class="form-control input-underline input-lg" id="password"
+                   placeholder="Password" name="password"
+                   formControlName="password">
+            <span *ngIf="formErrors.password" class="help-block">{{formErrors.password}}</span>
           </div>
+          </fieldset>
         </div>
-        <a class="btn rounded-btn" (click)="onLoggedin()"> Log in </a>
-        &nbsp;
-        <a class="btn rounded-btn" [routerLink]="['/signup']">Register</a>
+        <!--<a class="btn rounded-btn" (click)="onLoggedin()"> Log in </a>-->
+        <button type="submit" class="btn rounded-btn"> Log in </button>&nbsp;
+        <a class="btn rounded-btn" [routerLink]="['/signup']"> Register </a>
       </form>
     </div>
   </div>
   <div id="collapseMessage" [ngbCollapse]="isCollapsed">
     <br/>
     <pre style="color:white;">{{alertMessage}}</pre>
+    <div *ngIf="errorResponse?.message" class="alert alert-danger">
+      {{errorResponse?.message}}
+    </div>
   </div>
 </div>

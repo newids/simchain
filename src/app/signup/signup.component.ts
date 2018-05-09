@@ -1,10 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {routerTransition} from '../router.animations';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ApiResponse} from '../interface/api-response';
 import {Subject} from 'rxjs/Subject';
 import {debounceTime} from 'rxjs/operator/debounceTime';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../interface/auth.service';
+import {UtilService} from '../interface/util.service';
 import {EmailValidator} from '@angular/forms';
 
 @Component({
@@ -14,10 +16,6 @@ import {EmailValidator} from '@angular/forms';
   animations: [routerTransition()]
 })
 export class SignupComponent implements OnInit {
-  username;
-  password;
-  password2;
-
   public isCollapsed = true;
 
   private _alert = new Subject<string>();
@@ -26,24 +24,69 @@ export class SignupComponent implements OnInit {
   redirectTo: string;
   errorResponse: ApiResponse;
 
+  form: FormGroup;
+  formErrors = {
+    'email': '',
+    'password': '',
+    'passwordConfirmation': '',
+  };
+  formErrorMessages = {
+    'email': {
+      'required': 'Email is required!',
+      'pattern': 'Should be a vaild email address!',
+    },
+    'password': {
+      'required': 'Password is required!',
+      'pattern': 'Should be minimum 8 characters of alphabet and number combination!',
+    },
+    'passwordConfirmation': {
+      'required': 'Password Confirmation is required!',
+      'match': 'Password Confirmation does not matched!', // 4
+    },
+  };
+
+  buildForm(): void { // 1
+    this.form = this.formBuilder.group({
+      email: ['', [Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],
+      password: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/)]],
+      passwordConfirmation: ['', [Validators.required]],
+    }, {
+      validator: this.customValidation, // 2
+    });
+
+    this.form.valueChanges.subscribe(data => {
+      this.utilService.updateFormErrors(this.form, this.formErrors, this.formErrorMessages);
+    });
+  };
+
+  customValidation(group: FormGroup) { // 3
+    const password = group.get('password');
+    const passwordConfirmation = group.get('passwordConfirmation');
+    if (password.dirty && passwordConfirmation.dirty && password.value !== passwordConfirmation.value) {
+      passwordConfirmation.setErrors({'match': true});
+    }
+  }
+
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService,
+    private formBuilder: FormBuilder,
+    private utilService: UtilService,
   ) {
+    this.buildForm();
   }
 
   ngOnInit() {
-    this.alertMessage = '';
-    this.isCollapsed = false;
-    this._alert.subscribe((message) => this.alertMessage = message);
-    debounceTime.call(this._alert, 5000).subscribe(() => {
-      this.alertMessage = null;
-      this.isCollapsed = true;
-    });
-    this.username = '';
-    this.password = '';
-    this.password2 = '';
+    this.alert('');
+    // this.alertMessage = '';
+    // this.isCollapsed = false;
+    // this._alert.subscribe((message) => this.alertMessage = message);
+    // debounceTime.call(this._alert, 5000).subscribe(() => {
+    //   this.alertMessage = null;
+    //   this.isCollapsed = true;
+    // });
     localStorage.setItem('isLoggedin', 'false');
     localStorage.setItem('token', '');
     localStorage.setItem('node_number', '');
@@ -52,20 +95,13 @@ export class SignupComponent implements OnInit {
   }
 
   onRegister() {
-    // if (!this.username.validate(this.username)) {
-    //   console.log(this.username.validate(this.username));
-    //   this.alert('email 을 올바른 형식으로 입력해 주세요.');
-    //   return;
-    // }
-    if (this.password || this.password2 || this.password.length < 8) {
-      this.alert('password 의 길이를 8자 이상으로 입력해 주세요.');
+    this.utilService.makeFormDirtyAndUpdateErrors(this.form, this.formErrors, this.formErrorMessages);
+    if (!this.form.valid) {
+      this.alert('입력값을 확인해 주십시오.');
       return;
     }
-    if (this.password || this.password2 || this.password !== this.password2) {
-      this.alert('password 가 일치하지 않습니다.');
-      return;
-    }
-    this.authService.register(this.username, this.password)
+
+    this.authService.register(this.form.value.email, this.form.value.password)
       .then(data => {
         this.router.navigate([this.redirectTo ? this.redirectTo : '/main']);
         localStorage.setItem('isLoggedin', 'true');
@@ -73,14 +109,15 @@ export class SignupComponent implements OnInit {
       })
       .catch(response => {
         this.errorResponse = response;
+        this.utilService.handleFormSubmitError(this.errorResponse, this.form, this.formErrors); // 5-4
         // this._alert.next(`Error: ${new Date()} - ${response.status} : ${response.statusText}`);
         this.alert('Error: e-mail 또는 password 를 확인해 주십시오.');
-        // this.utilService.handleFormSubmitError(this.errorResponse, this.form, this.formErrors); // 5-4
         localStorage.setItem('isLoggedin', 'false');
         localStorage.setItem('token', '');
         localStorage.setItem('node_number', '');
         localStorage.setItem('email', '');
         localStorage.setItem('currentUser', null);
+        console.log('this.form.value: ', this.form.value);
         console.log('this.errorResponse: ', this.errorResponse);
         console.log('onLoggedOut', '------------');
       });
@@ -97,4 +134,6 @@ export class SignupComponent implements OnInit {
       this.isCollapsed = true;
     });
   }
+
+
 }
