@@ -8,6 +8,8 @@ import {Key} from '../../interface/key.interface';
 import {Network} from 'bitcoinjs-lib';
 import {ECSignature} from 'bitcoinjs-lib';
 import {TxService} from '../../interface/tx.service';
+import {debounceTime} from 'rxjs/operator/debounceTime';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'app-transaction',
@@ -15,6 +17,7 @@ import {TxService} from '../../interface/tx.service';
   styleUrls: ['./transaction.component.css']
 })
 export class TransactionComponent implements OnInit {
+  node_number = '';
   from;
   to;
   amount = 10;
@@ -23,16 +26,39 @@ export class TransactionComponent implements OnInit {
   sha256;
   signature;
   verified;
-  private_key;
-  public_key;
+  result;
+  privateKey;
+  publicKey;
   keyPair;
   keyList: Key[];
-  alertMessage;
 
-  constructor(private keyService: KeyService, private txService: TxService) {
+  alertMessage: string = null;
+  private _alert: Subject<string>;
+
+  constructor(
+    private keyService: KeyService, private txService: TxService
+  ) {
+    this._alert = new Subject<string>();
   }
 
   ngOnInit() {
+    this.alert('');
+
+    this.node_number = localStorage.getItem('node_number');
+    try {
+      this.keyService.get_key_node(this.node_number)
+        .then(keyList => {
+          this.keyList = keyList;
+          console.log('keyList: ', keyList);
+        })
+        .catch(response => {
+          this.alert(`errors: ${response.errors}`);
+          console.log('errors: ', response.errors);
+        });
+    } catch (e) {
+      this.alert(`Error: ${e.toLocaleString()}`);
+      console.log('Error: ', e.toLocaleString());
+    }
   }
 
   generate() {
@@ -48,22 +74,23 @@ export class TransactionComponent implements OnInit {
 
   sign() {
     try {
-    const keyPair = this.public_key_from_private_key();
+      const keyPair = this.public_key_from_private_key();
 
-    console.log('json : ', JSON.stringify(this.tx));
-    this.sha256 = bigi.fromBuffer(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx)))).toHex();
-    console.log('sha256 : ', this.sha256);
-    const ecSignature = keyPair.sign(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx))));
-    this.signature = bigi.fromBuffer(ecSignature.toDER()).toHex();
-    console.log('signature : ', this.signature);
+      console.log('json : ', JSON.stringify(this.tx));
+      this.sha256 = bigi.fromBuffer(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx)))).toHex();
+      console.log('sha256 : ', this.sha256);
+      const ecSignature = keyPair.sign(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx))));
+      this.signature = bigi.fromBuffer(ecSignature.toDER()).toHex();
+      console.log('signature : ', this.signature);
     } catch (e) {
       this.verified = e.toLocaleString();
+      this.alert(`Error: ${e.toLocaleString()}`);
     }
   }
 
   verify() {
     try {
-      const testKeyPair = bitcoin.ECPair.fromPublicKeyBuffer(Buffer.from(this.public_key, 'hex'), bitcoin.networks.bitcoin);
+      const testKeyPair = bitcoin.ECPair.fromPublicKeyBuffer(Buffer.from(this.publicKey, 'hex'), bitcoin.networks.bitcoin);
       console.log('test public_key: ', this.keyList[0].public_key);
       console.log('gen public_key: ', bigi.fromBuffer(testKeyPair.getPublicKeyBuffer()).toHex());
       console.log('test private_key: ', this.keyList[0].private_key);
@@ -79,6 +106,7 @@ export class TransactionComponent implements OnInit {
       this.verified = isVerified.toLocaleString();
     } catch (e) {
       this.verified = e.toLocaleString();
+      this.alert(`Error: ${e.toLocaleString()}`);
     }
   }
 
@@ -93,14 +121,17 @@ export class TransactionComponent implements OnInit {
           if (balance >= this.amount) {
             this.save_request();
           } else {
-            this.verified = 'Balance Too Low.';
+            this.result = 'Balance Too Low.';
           }
         })
         .catch(response => {
-          this.verified = 'Rejected.';
+          this.result = 'Rejected.';
+          this.alert(`Rejected: ${response.errors}`);
+          console.log('errors: ', response.toLocaleString());
         });
     } catch (e) {
-      console.log('error: ', e.toLocaleString());
+      this.alert(`Error: ${e.toLocaleString()}`);
+      console.log('Error: ', e.toLocaleString());
     }
   }
 
@@ -118,13 +149,15 @@ export class TransactionComponent implements OnInit {
     try {
       this.txService.create_tx_request(newTx)
         .then(tx => {
-          this.verified = 'Saved.';
+          this.result = 'Saved.';
         })
         .catch(response => {
-          this.verified = 'Rejected.';
+          this.result = 'Rejected.';
+          this.alert(`Rejected: ${response.errors}`);
         });
     } catch (e) {
-      console.log('error: ', e.toLocaleString());
+      this.alert(`Error: ${e.toLocaleString()}`);
+      console.log('Error: ', e.toLocaleString());
     }
   }
 
@@ -136,8 +169,8 @@ export class TransactionComponent implements OnInit {
         console.log('set node_number(node_number: string) Key : ', this.keyList);
         if (this.keyList.length > 0) {
           this.from = this.keyList[0].address;
-          this.private_key = this.keyList[0].private_key;
-          this.public_key = this.keyList[0].public_key;
+          this.privateKey = this.keyList[0].private_key;
+          this.publicKey = this.keyList[0].public_key;
           this.keyPair = bitcoin.ECPair.fromWIF(this.keyList[0].wif, bitcoin.networks.bitcoin);
         }
         if (this.keyList.length > 1) {
@@ -150,13 +183,13 @@ export class TransactionComponent implements OnInit {
     // http://procbits.com/2013/08/27/generating-a-bitcoin-address-with-javascript
     // https://github.com/cryptocoinjs/secp256k1-node
 
-    const pubKey = secp256k1.publicKeyCreate(Buffer.from(this.private_key, 'hex'));
+    const pubKey = secp256k1.publicKeyCreate(Buffer.from(this.privateKey, 'hex'));
 
-    const keyPairFromPrivateKey = new bitcoin.ECPair(bigi.fromBuffer(Buffer.from(this.private_key, 'hex')), null,
+    const keyPairFromPrivateKey = new bitcoin.ECPair(bigi.fromBuffer(Buffer.from(this.privateKey, 'hex')), null,
       {compressed: true, network: bitcoin.networks.bitcoin});
 
-    console.log('this.private_key : ', this.private_key);
-    console.log('this.public_key : ', this.public_key);
+    console.log('this.private_key : ', this.privateKey);
+    console.log('this.public_key : ', this.publicKey);
 
     console.log('created pubKey : ', bigi.fromBuffer(pubKey).toHex());
 
@@ -166,7 +199,20 @@ export class TransactionComponent implements OnInit {
     return keyPairFromPrivateKey;
   }
 
-  clearForm() {
-
+  changeFrom(key) {
+    this.from = key.address;
+    this.privateKey = key.private_key;
+    this.publicKey = key.public_key;
   }
+
+  changeTo(key) {
+    this.to = key.address;
+  }
+
+  alert(msg: string) {
+    this._alert.next(msg);
+    this._alert.subscribe((message) => { this.alertMessage = message; });
+    debounceTime.call(this._alert, 5000).subscribe(() => { this.alertMessage = null; });
+  }
+
 }

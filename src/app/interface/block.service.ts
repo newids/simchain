@@ -20,7 +20,7 @@ export class BlockService {
     private utilService: UtilService,
   ) {}
 
-  create_a_block(block: Block): Promise<string> {
+  create_a_block(block: Block): Promise<Block> {
     return this.http.post<ApiResponse>(`${this.apiBaseUrl}`, block)
       .toPromise()
       .then(this.utilService.checkSuccess)

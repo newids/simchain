@@ -7,27 +7,18 @@
   </div>
   <!-- /.col-lg-12 -->
 </div>
-<!-- /.row -->
+<br/>
 
 <div id="desc" class="desc collapse">
   <div class="well" data-load="./load-mining.html"></div>
 </div>
 <!-- / desc -->
 
-<div class="d-inline-block dropdown" ngbDropdown #myDrop="ngbDropdown">
-  <button class="btn btn-outline-primary" ngbDropdownToggle>{{address}}</button>
-  <div ngbDropdownMenu>
-    <button class="dropdown-item" *ngFor="let key of keyList">{{ key.address }}</button>
-  </div>
-</div>
+<div class="card">
+  <div class="card-header"><b>Header</b></div>
+  <!-- / card-header -->
 
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h4 class="panel-title">Header</h4>
-  </div>
-  <!-- / panel-header -->
-
-  <div class="panel-body">
+  <div class="card-body">
     <div class="row form-group">
       <label class="col-sm-2 control-label">height</label>
       <div class="col-sm-10">
@@ -75,95 +66,136 @@
       </div>
     </div>
   </div>
-  <!-- / panel-body -->
+  <!-- / card-body -->
 </div>
-<!-- / panel -->
+<br/>
 
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h4 class="panel-title">Transactions</h4>
+<div class="card" id="accordion">
+  <div class="card-header row">
+      <div class="col-sm-6">
+        <button type="button" class="btn btn-default btn-block text-left bg-transparent"
+                (click)="collapse()"
+                [attr.aria-expanded]="!isCollapsed"
+                aria-controls="collapseExample"><b>Transactions</b>
+        </button>
+      </div>
+      <div class="col-sm-6">
+        <button type="button" class="btn btn-default btn-block text-right bg-transparent"
+                (click)="collapse();"
+                [attr.aria-expanded]="!isCollapsed"
+                aria-controls="collapseExample">{{collapseLabel}} <i class="fa fa-arrow-circle-o-{{collapseArrow}}"></i>
+        </button>
+      </div>
   </div>
-  <!-- / panel-heading -->
-  <div class="panel-body">
-    <div class="row">
-      <div class="col-sm-12">
-        <ngx-datatable
-          #table_tx
-          class="material"
-          [rows]="rows_tx"
-          [columns]="columns_tx"
-          [columnMode]="'force'"
-          [headerHeight]="40"
-          [footerHeight]="40"
-          [rowHeight]="'auto'"></ngx-datatable>
-        <input
-          type='text'
-          style='padding:5px;margin:15px auto;width:90%;'
-          placeholder='Type to filter the Address...'
-          (keyup)='updateFilter2($event)'
-        /> <i class="fa fa-search"></i>
+  <!-- / card-header -->
+    <div class="card-body" id="collapseOne" [ngbCollapse]="isCollapsed">
+      <div class="row">
+        <div class="col-sm-12">
+          <ngx-datatable
+            #table_tx
+            class="material"
+            [rows]="rows_tx"
+            [columns]="columns_tx"
+            [columnMode]="'force'"
+            [headerHeight]="40"
+            [footerHeight]="40"
+            [rowHeight]="'auto'"></ngx-datatable>
+          <input
+            type='text'
+            style='padding:5px;margin:15px auto;width:90%;'
+            placeholder='Type to filter the Address...'
+            (keyup)='updateFilter2($event)'
+          /> <i class="fa fa-search"></i>
+        </div>
+      </div>
+      <!-- / .row -->
+  </div>
+  <!-- / .card-body -->
+</div>
+
+<br/>
+<div class="alert-dismissible">
+  <ngb-alert *ngIf="alertMessage" type="warning" (close)="alertMessage = null">{{ alertMessage }}</ngb-alert>
+</div>
+
+<div class="card">
+  <div class="card-header"><b>Mining</b></div>
+  <!-- / card-header -->
+  <div class="card-body">
+    <div class="row form-group">
+      <label class="col-sm-2 control-label">Coinbase</label>
+      <div class="col-sm-10 d-inline-block" ngbDropdown #myDrop="ngbDropdown">
+        <button class="btn btn-outline-primary btn-block text-left" ngbDropdownToggle>{{address}}</button>
+        <div ngbDropdownMenu>
+          <button class="dropdown-item" *ngFor="let key of keyList"
+                  (click)="changeCoinbase(key)">{{ key.address }}
+          </button>
+        </div>
       </div>
     </div>
-    <!-- / .row -->
-  </div>
-  <!-- / .panel-body -->
-</div>
 
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h4 class="panel-title">Mining</h4>
-  </div>
-  <!-- / panel-heading -->
-  <div class="panel-body">
     <div class="row form-group">
-      <div class="col-sm-3">
-        <button type="button" class="btn btn-primary btn-block" (click)="findNonce()">Find Nonce</button>
-      </div>
-      <div class="col-sm-1">
-        <label class="col-sm-2 control-label">Timeout(sec.)</label>
-      </div>
-      <div class="col-sm-2">
+      <label class="col-sm-2 control-label">Timeout(sec.)</label>
+      <div class="col-sm-10">
         <input type="text" class="form-control" [(ngModel)]="timeout" name="timeout">
       </div>
     </div>
+
+    <div class="row form-group">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-4">
+        <button type="button" class="btn btn-primary btn-block" (click)="findNonce()">Find Nonce</button>
+      </div>
+    </div>
+
     <div class="row form-group">
       <label class="col-sm-2 control-label">nonce</label>
       <div class="col-sm-10">
         <input type="text" class="form-control" [(ngModel)]="nonce" name="nonce" readonly>
       </div>
     </div>
+
     <div class="row form-group">
       <label class="col-sm-2 control-label">hash</label>
       <div class="col-sm-10">
         <input type="text" class="form-control" [(ngModel)]="newHash" name="nonce" readonly>
       </div>
     </div>
-  </div>
-  <div class="panel-body">
-    <div class="row">
-      <div class="col-sm-3">
+
+    <div class="form-group row">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-4">
         <button type="button" class="btn btn-primary btn-block" (click)="broadcast()">Broadcast</button>
       </div>
-      <div class="col-sm-6">
+    </div>
+
+    <div class="form-group row">
+      <label class="col-sm-2 control-label">Result</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" [(ngModel)]="result" name="result" readonly>
       </div>
-      <div class="col-sm-3">
+    </div>
+
+    <div class="row form-group">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-4">
         <button type="button" class="btn btn-primary btn-block" (click)="reload()">Reload</button>
       </div>
     </div>
-    <!-- / .row -->
+
   </div>
-  <!-- / .panel-body -->
+  <!-- / .card-body -->
 </div>
 <!--<div class="col-sm-3">-->
 <!--<button type="button" class="btn btn-primary btn-block" (click)="autoMode()">Auto Mode</button>-->
 <!--</div>-->
 
-<!--<div class="panel panel-default">-->
-<!--<div class="panel-heading">-->
-<!--<h4 class="panel-title">Log</h4>-->
+<!--<div class="card">-->
+<!--<div class="card-header">-->
+<!--<h4 class="card-title">Log</h4>-->
 <!--</div>-->
-<!--&lt;!&ndash; / panel-heading &ndash;&gt;-->
-<!--<div class="panel-body">-->
+<!--&lt;!&ndash; / card-header &ndash;&gt;-->
+<!--<div class="card-body">-->
 <!--<div class="row">-->
 <!--<div class="col-sm-12">-->
 <!--<textarea name="textLog" id="textLog" class="form-control" cols="30" rows="3">{{textLog}}</textarea>-->
@@ -171,5 +203,5 @@
 <!--</div>-->
 <!--&lt;!&ndash; / .row &ndash;&gt;-->
 <!--</div>-->
-<!--&lt;!&ndash; / .panel-body &ndash;&gt;-->
+<!--&lt;!&ndash; / .card-body &ndash;&gt;-->
 <!--</div>-->

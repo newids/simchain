@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import * as CryptoJS from 'crypto-js';
 import {WordArray} from 'crypto-js';
 import {interceptingHandler} from '@angular/common/http/src/module';
 import {Subject} from 'rxjs/Subject';
 import {debounceTime} from 'rxjs/operator/debounceTime';
+import {NgbTooltip} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-symmetric-key',
@@ -20,13 +21,21 @@ export class SymmetricKeyComponent implements OnInit {
   passphrase2: string;
   txtCiphertext2: string;
   txtPlaintext2: string;
-  lenPlaintext;
-  lenCiphertext;
+  lenPlaintext = 0;
+  lenCiphertext = 0;
 
   alertMessage: string;
   private _alert = new Subject<string>();
 
-  alert() {
+  @ViewChild('copyTextTooltip') copyTextTooltip: NgbTooltip;
+  @ViewChild('copyHashedTooltip') copyHashedTooltip: NgbTooltip;
+  @ViewChild('copyTextTooltip2') copyTextTooltip2: NgbTooltip;
+  @ViewChild('copyHashedTooltip2') copyHashedTooltip2: NgbTooltip;
+
+  private subject$ = new Subject();
+
+  alert(msg: string) {
+    this._alert.next(msg);
     this._alert.subscribe((message) => this.alertMessage = message);
     debounceTime.call(this._alert, 5000).subscribe(() => this.alertMessage = null);
   }
@@ -35,6 +44,8 @@ export class SymmetricKeyComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.tooltip(null);
+    this.alert('');
   }
 
   cmdEncryptClick() {
@@ -42,9 +53,8 @@ export class SymmetricKeyComponent implements OnInit {
       const c = CryptoJS.AES.encrypt(this.txtPlaintext, this.passphrase);
       this.txtCiphertext = c.toString();
     } catch (e) {
-      const msg = e.toLocaleString();
-      this._alert.next(`Error: ${new Date()} - ${msg}`);
-      this.alert();
+      this.alert(`Error: ${new Date()} - ${e.toLocaleString()}`);
+      console.log(e.toLocaleString());
     }
   }
 
@@ -53,9 +63,16 @@ export class SymmetricKeyComponent implements OnInit {
       const d = String(Math.floor(Math.random() * 10000));
       const b = this.getHash(d, this.selKeySize);
       this.passphrase = b;
-    } catch (a) {
-      this._alert.next(`${new Date()} - Error: Fail to generate pass phrase.`);
-      this.alert();
+
+      const textA = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ullamcorper a quam ac rhoncus. Suspendisse condimentum congue leo vel convallis.';
+      const textB = 'Vivamus ac eleifend purus, at vehicula felis. Sed ornare suscipit imperdiet. Maecenas eu eros nibh. Phasellus non imperdiet urna, eget volutpat nisl. Nulla lacinia quam ac mi bibendum, eu sagittis quam tincidunt. Nulla vel congue erat. Aenean pulvinar venenatis pellentesque. Suspendisse tempus augue id vestibulum pretium. Aenean ac semper augue. Vivamus ultrices ante ac pulvinar pellentesque. Ut semper condimentum aliquet.\n Nulla eget velit urna. Phasellus sit amet vulputate erat, vitae volutpat velit. Curabitur at elit porttitor, cursus neque at, pretium lectus. Praesent bibendum ullamcorper nulla a mattis. Suspendisse non facilisis tortor. Nulla facilisi. Morbi porttitor vehicula consequat. In id mattis sapien. Nullam ut augue nunc. Nullam eget odio viverra, tempus felis quis, lobortis ipsum. Aenean sit amet lacus molestie, pretium nisi eget, sodales leo. Fusce luctus ultrices tempor.';
+      const r = Math.floor(Math.random() * 10000 + 1);
+      const random = String(r);
+
+      this.txtPlaintext = `${textA} +0OIl/ ${random}.\n${textB}`;
+      this.lenPlaintext = this.txtPlaintext.length;
+    } catch (e) {
+      this.alert(`Error: ${new Date()} - ${e.toLocaleString()}`);
       return -1;
     }
   }
@@ -66,6 +83,7 @@ export class SymmetricKeyComponent implements OnInit {
 
   getCiphertext() {
     this.txtCiphertext2 = this.txtCiphertext;
+    this.lenCiphertext = this.txtCiphertext2.length;
   }
 
   getHash(c: string, e: string): string {
@@ -90,19 +108,23 @@ export class SymmetricKeyComponent implements OnInit {
       const bytes = CryptoJS.AES.decrypt(this.txtCiphertext2, this.passphrase2);
       this.txtPlaintext2 = bytes.toString(CryptoJS.enc.Utf8);
     } catch (e) {
-      const msg = e.toLocaleString();
-      this._alert.next(`Error: ${new Date()} - ${msg}`);
-      this.alert();
+      this.alert(`Error: ${new Date()} - ${e.toLocaleString()}`);
+      console.log(e.toLocaleString());
     }
   }
 
-  clearText() {
-    this.passphrase2 = '';
-    this.passphrase = '';
-    this.txtPlaintext = '';
-    this.txtPlaintext2 = '';
-    this.txtCiphertext = '';
-    this.txtCiphertext2 = '';
+  copyText() {
+    this.tooltip(this.copyTextTooltip);
+  }
+
+  tooltip(object: NgbTooltip) {
+    this.subject$.next(object);
+    this.subject$.subscribe((tooltip: NgbTooltip) => {
+      tooltip.open();
+    });
+    debounceTime.call(this.subject$, 2000).subscribe((tooltip) => {
+      tooltip.close();
+    });
   }
 
 }

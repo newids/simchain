@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import * as bitcoin from 'bitcoinjs-lib';
 import * as bigi from 'bigi';
 import {ECPair} from 'bitcoinjs-lib';
@@ -6,6 +6,8 @@ import {KeyService} from '../../interface/key.service';
 import {Key} from '../../interface/key.interface';
 import {Subject} from 'rxjs/Subject';
 import {debounceTime} from 'rxjs/operator/debounceTime';
+import {NgbTooltip} from '@ng-bootstrap/ng-bootstrap';
+import {createViewChild} from '@angular/compiler/src/core';
 
 @Component({
   selector: 'app-wallet',
@@ -19,13 +21,14 @@ export class WalletComponent implements OnInit {
   wifValue = '';
   addressValue = '';
   keyPair: ECPair;
+
   alertMessage: string = null;
   private _alert: Subject<string>;
 
-  alert() {
-    this._alert.subscribe((message) => this.alertMessage = message);
-    debounceTime.call(this._alert, 5000).subscribe(() => this.alertMessage = null);
-  }
+  subject$ = new Subject<NgbTooltip>();
+  @ViewChild('copyPrivateKeyTooltip') copyPrivateKeyTooltip: NgbTooltip;
+  @ViewChild('copyWifTooltip') copyWifTooltip: NgbTooltip;
+  @ViewChild('copyAddressTooltip') copyAddressTooltip: NgbTooltip;
 
   constructor(
     private keyService: KeyService
@@ -34,6 +37,8 @@ export class WalletComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.tooltip(null);
+    this.alert('');
   }
 
   generateKey() {
@@ -53,8 +58,7 @@ export class WalletComponent implements OnInit {
       console.log('compAddress', keyForCompressed.getAddress());
       console.log('compPrivateKey', keyForCompressed.d.toHex());
     } catch (e) {
-      this._alert.next(`Error: ${new Date()} - ${e.toLocaleString()}`);
-      this.alert();
+      this.alert(`Error: ${e.toLocaleString()}`);
       console.log('error:', e.toLocaleString());
     }
   }
@@ -72,18 +76,15 @@ export class WalletComponent implements OnInit {
       };
       this.keyService.create(key as Key)
         .then(data => {
-          this._alert.next('저장되었습니다.');
-          this.alert();
+          this.alert('저장되었습니다.');
           console.log('Key saved.');
         })
         .catch(response => {
-          this._alert.next(`Error: ${new Date()} - ${response.errors}`);
-          this.alert();
+          this.alert(`Error: ${response.errors}`);
           console.log('Key save fail.');
         });
     } catch (e) {
-      this._alert.next(`Error: ${new Date()} - ${e.toLocaleString()}`);
-      this.alert();
+      this.alert(`Error: ${e.toLocaleString()}`);
       console.log('error:', e.toLocaleString());
     }
   }
@@ -98,8 +99,32 @@ export class WalletComponent implements OnInit {
     this.alertMessage = null;
   }
 
-  pastePrivateKey() {
+  copyPrivateKey() {
+    this.tooltip(this.copyPrivateKeyTooltip);
+  }
 
+  copyWif() {
+    this.tooltip(this.copyWifTooltip);
+  }
+
+  copyAddress() {
+    this.tooltip(this.copyAddressTooltip);
+  }
+
+  tooltip(object: NgbTooltip) {
+    this.subject$.next(object);
+    this.subject$.subscribe((tooltip: NgbTooltip) => {
+      tooltip.open();
+    });
+    debounceTime.call(this.subject$, 2000).subscribe((tooltip) => {
+      tooltip.close();
+    });
+  }
+
+  alert(msg: string) {
+    this._alert.next(msg);
+    this._alert.subscribe((message) => { this.alertMessage = message; });
+    debounceTime.call(this._alert, 5000).subscribe(() => { this.alertMessage = null; });
   }
 
 }

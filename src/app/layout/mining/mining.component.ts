@@ -4,6 +4,9 @@ import {BlockService} from '../../interface/block.service';
 import {KeyService} from '../../interface/key.service';
 import {TxService} from '../../interface/tx.service';
 import * as CryptoJS from 'crypto-js';
+import {debounceTime} from 'rxjs/operator/debounceTime';
+import {Subject} from 'rxjs/Subject';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-mining',
@@ -23,7 +26,7 @@ export class MiningComponent implements OnInit {
   nonce = 0;
   newHash = '';
   timeout = 300; // 5 minute
-  logginMode = false;
+  result = '';
 
   columns_tx = [
     {name: 'From', prop: 'from', flexGrow: 2},
@@ -32,16 +35,26 @@ export class MiningComponent implements OnInit {
   ];
   rows_tx = [];
 
+  isCollapsed = false;
+  collapseLabel = '숨기기';
+  collapseArrow = 'up';
+  alertMessage: string = null;
+  private _alert: Subject<string>;
+
   // https://angular.io/guide/lifecycle-hooks#onchanges
 
 
   constructor(
     private blockService: BlockService,
     private keyService: KeyService,
-    private txService: TxService
-  ) {}
+    private txService: TxService,
+  ) {
+    this._alert = new Subject<string>();
+  }
 
   ngOnInit() {
+    this.alert('');
+
     this.node_number = localStorage.getItem('node_number');
     this.timestamp = Date.now();
     this.newBlock = new Block ({
@@ -70,11 +83,13 @@ export class MiningComponent implements OnInit {
           this.newBlock.prev_hash = CryptoJS.SHA256(headerData).toString();
           this.newBlock.merkle_root = CryptoJS.SHA256((this.oldBlock.height + 1).toString(16)).toString();
         })
-        .catch(error => {
-          console.log('error:', error);
+        .catch(response => {
+          this.alert(`errors: ${response.errors}`);
+          console.log('errors: ', response.toLocaleString());
         });
     } catch (e) {
-      console.log('error: ', e.toLocaleString());
+      this.alert(`Error: ${e.toLocaleString()}`);
+      console.log('Error: ', e.toLocaleString());
     }
 
     try {
@@ -88,14 +103,14 @@ export class MiningComponent implements OnInit {
 
           this.createTxList();
         })
-        .catch(error => {
-          console.log('error: ', error.toLocaleString());
+        .catch(response => {
+          this.alert(`errors: ${response.errors}`);
+          console.log('errors: ', response.toLocaleString());
         });
     } catch (e) {
-      console.log('Exception: ', e.toLocaleString());
+      this.alert(`Error: ${e.toLocaleString()}`);
+      console.log('Error: ', e.toLocaleString());
     }
-
-
   }
 
   createTxList() {
@@ -117,11 +132,13 @@ export class MiningComponent implements OnInit {
           console.log('tx: ', tx);
           console.log('this.rows_tx: ', this.rows_tx);
         })
-        .catch(error => {
-          console.log('error: ', error.toLocaleString());
+        .catch(response => {
+          this.alert(`errors: ${response.errors}`);
+          console.log('errors: ', response.errors);
         });
     } catch (e) {
-      console.log('Exception: ', e.toLocaleString());
+      this.alert(`Error: ${e.toLocaleString()}`);
+      console.log('Error: ', e.toLocaleString());
     }
   }
 
@@ -153,32 +170,51 @@ export class MiningComponent implements OnInit {
     console.log('Elapsed Time : ', (Date.now() - start) / 1000, ' sec.');
   }
 
-
   broadcast() {
     try {
       this.blockService.create_a_block(this.newBlock)
         .then(block => {
-          const aBlock = block[0];
-          console.log('Succeed to create new block.', aBlock);
+          const resBlock: Block = block;
+          this.result = `Succeed to create new block. Height number: ${resBlock.height}`;
+          console.log('Succeed to create new block. Height number:', resBlock.height);
         })
-        .catch(error => {
-          console.log('error:', error);
+        .catch(response => {
+          this.alert(`errors: ${response.errors}`);
+          console.log('errors: ', response.errors);
         });
     } catch (e) {
-      console.log('error: ', e.toLocaleString());
+      this.alert(`Error: ${e.toLocaleString()}`);
+      console.log('Error: ', e.toLocaleString());
     }
-
   }
 
+  changeCoinbase(key) {
+    this.address = key.address;
+    this.createTxList();
+  }
 
   reload() {
-
+    this.ngOnInit();
+    this.nonce = 0;
+    this.newHash = '';
+    this.result = '';
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
   }
 
-
-  updateFilter2(event) {
-
+  alert(msg: string) {
+    this._alert.next(msg);
+    this._alert.subscribe((message) => { this.alertMessage = message; });
+    debounceTime.call(this._alert, 8000).subscribe(() => { this.alertMessage = null; });
   }
 
-
+  collapse() {
+    this.isCollapsed = !this.isCollapsed;
+    if (this.isCollapsed) {
+      this.collapseLabel = '보이기';
+      this.collapseArrow = 'down';
+    } else {
+      this.collapseLabel = '숨기기';
+      this.collapseArrow = 'up';
+    }
+  }
 }

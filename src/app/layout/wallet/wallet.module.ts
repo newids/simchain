@@ -5,6 +5,7 @@ import {NgbAlertModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import {WalletRoutingModule} from './wallet-routing.module';
 import {WalletComponent} from './wallet.component';
+import {ClipboardModule} from 'ngx-clipboard';
 
 @NgModule({
   imports: [
@@ -12,6 +13,7 @@ import {WalletComponent} from './wallet.component';
     NgbModule.forRoot(),
     NgbAlertModule.forRoot(),
     FormsModule,
+    ClipboardModule,
     WalletRoutingModule
   ],
   declarations: [WalletComponent]

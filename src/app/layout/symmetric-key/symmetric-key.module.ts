@@ -5,6 +5,7 @@ import {NgbAlertModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import {SymmetricKeyRoutingModule} from './symmetric-key-routing.module';
 import {SymmetricKeyComponent} from './symmetric-key.component';
+import {ClipboardModule} from 'ngx-clipboard';
 
 @NgModule({
   imports: [
@@ -12,7 +13,8 @@ import {SymmetricKeyComponent} from './symmetric-key.component';
     NgbModule.forRoot(),
     NgbAlertModule.forRoot(),
     FormsModule,
-    SymmetricKeyRoutingModule
+    SymmetricKeyRoutingModule,
+    ClipboardModule
   ],
   declarations: [SymmetricKeyComponent]
 })

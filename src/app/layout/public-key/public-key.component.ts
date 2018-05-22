@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import * as bitcoin from 'bitcoinjs-lib';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import * as bigi from 'bigi';
-import {ECPair} from 'bitcoinjs-lib';
-import * as rsa from 'node-rsa';
-import {_catch} from 'rxjs/operator/catch';
+import {Subject} from 'rxjs/Subject';
+import {debounceTime} from 'rxjs/operator/debounceTime';
+import {NgbTooltip} from '@ng-bootstrap/ng-bootstrap';
 
 //  library : https://www.npmjs.com/package/node-rsa
 //  package.json 수정 : https://stackoverflow.com/questions/47486774/crypto-randombytes-is-not-a-function-in-angular
@@ -17,16 +16,25 @@ import {_catch} from 'rxjs/operator/catch';
 export class PublicKeyComponent implements OnInit {
   privatekeyValue = '';
   publickeyValue = '';
-  inputValue = '안녕하세요?';
+  inputValue = '평문을 입력해 주세요.';
   encryptedOutput = '';
   decryptedOutput = '';
   rsaKeyPair;
-  alertMessage;
+
+  alertMessage: string;
+  private _alert = new Subject<string>();
+
+  private subject$ = new Subject<NgbTooltip>();
+
+  @ViewChild('copyPrivateTooltip') copyPrivateTooltip: NgbTooltip;
+  @ViewChild('copyPublicTooltip') copyPublicTooltip: NgbTooltip;
 
   constructor() {
   }
 
   ngOnInit() {
+    this.tooltip(null);
+    this.alert('');
   }
 
   newPrivateKey() {
@@ -39,128 +47,89 @@ export class PublicKeyComponent implements OnInit {
       this.publickeyValue = this.publickeyValue = bigi.fromBuffer(publicKey).toHex();
     } catch (e) {
       console.log('error:', e.toLocaleString());
+      this.alert(`Error: ${e.toLocaleString()}`);
+      this.encryptedOutput = '';
+      this.decryptedOutput = '';
     }
-
-    // const hash = bitcoin.crypto.sha256(Buffer.from(String(Math.floor(Math.random() * 100000)), 'utf-8'));
-    // const x = bigi.fromBuffer(hash);
-    //
-    // this.keyPair = new bitcoin.ECPair(x);
-    // this.privatekeyValue = this.keyPair.d.toHex();
-    // this.publickeyValue = bigi.fromBuffer(this.keyPair.getPublicKeyBuffer()).toHex();
-    // // this.keyValue1 = keyPair.toWIF();
   }
 
-  signMessage() {
+  encryptPublic() {
     try {
       const encrypted = this.rsaKeyPair.encrypt(this.inputValue, 'base64');
       this.encryptedOutput = encrypted;    // setMaxDigits(38);
     } catch (e) {
       console.log('error:', e.toLocaleString());
+      this.alert(`Error: ${e.toLocaleString()}`);
       this.encryptedOutput = '';
     }
     this.decryptedOutput = '';
-
-    // const ciphertext = rsa.encryptedString(key, this.inputValue);
-    // const json_string: string = JSON.stringify(ciphertext);
-    // this.encryptedOutput = json_string;
-
-    // const hash = bitcoin.crypto.sha256(Buffer.from(this.inputValue, 'utf-8'));
-    // const signature = this.keyPair.sign(hash);
-    // this.encryptedOutput = bigi.fromBuffer(signature.toDER()).toHex();
   }
 
-  verifySignature() {
+  decryptPrivate() {
     try {
       const decrypted = this.rsaKeyPair.decrypt(Buffer.from(this.encryptedOutput, 'base64'), 'utf-8');
       this.decryptedOutput = decrypted;
     } catch (e) {
       console.log('error:', e.toLocaleString());
+      this.alert(`Error: ${e.toLocaleString()}`);
       this.decryptedOutput = '';
     }
-
-    // const hash = bitcoin.crypto.sha256(Buffer.from(this.inputValue, 'utf-8'));
-    // const signature = bitcoin.ECSignature.fromDER(Buffer.from(this.encryptedOutput, 'hex'));
-    // this.decryptedOutput = this.keyPair.verify(hash, signature).toString();
-    // console.log('verify=', this.keyPair.verify(hash, signature));
-
-    // var hassh = bitcoin.Buffer.from(this.messageHashToVerify, 'hex');
-    // var signatures = bitcoin.ECSignature.fromDER(bitcoin.Buffer.from(this.signatureToVerify, 'hex'));
-    // this.signatureValid = this.keyPair.verify(hash, signature);
   }
 
-  encPrivate() {
+  encryptPrivate() {
     try {
       const encrypted = this.rsaKeyPair.encryptPrivate(this.inputValue, 'base64');
       this.encryptedOutput = encrypted;    // setMaxDigits(38);
     } catch (e) {
       console.log('error:', e.toLocaleString());
+      this.alert(`Error: ${e.toLocaleString()}`);
       this.encryptedOutput = '';
     }
     this.decryptedOutput = '';
   }
 
-  decPublic() {
+  decryptPublic() {
     try {
       const decrypted = this.rsaKeyPair.decryptPublic(Buffer.from(this.encryptedOutput, 'base64'), 'utf-8');
       this.decryptedOutput = decrypted;
     } catch (e) {
       console.log('error:', e.toLocaleString());
+      this.alert(`Error: ${e.toLocaleString()}`);
       this.decryptedOutput = '';
     }
   }
 
-  clearText() {
-    this.rsaKeyPair = null;
-    this.privatekeyValue = '';
-    this.publickeyValue = '';
-    this.inputValue = '';
-    this.encryptedOutput = '';
-    this.decryptedOutput = '';
+  randomText() {
+    const textA = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ullamcorper a quam ac rhoncus. Suspendisse condimentum congue leo vel convallis.';
+    const textB = 'Vivamus ac eleifend purus, at vehicula felis. Sed ornare suscipit imperdiet. Maecenas eu eros nibh. Phasellus non imperdiet urna, eget volutpat nisl. Nulla lacinia quam ac mi bibendum, eu sagittis quam tincidunt. Nulla vel congue erat. Aenean pulvinar venenatis pellentesque. Suspendisse tempus augue id vestibulum pretium. Aenean ac semper augue. Vivamus ultrices ante ac pulvinar pellentesque. Ut semper condimentum aliquet.\n Nulla eget velit urna. Phasellus sit amet vulputate erat, vitae volutpat velit. Curabitur at elit porttitor, cursus neque at, pretium lectus. Praesent bibendum ullamcorper nulla a mattis. Suspendisse non facilisis tortor. Nulla facilisi. Morbi porttitor vehicula consequat. In id mattis sapien. Nullam ut augue nunc. Nullam eget odio viverra, tempus felis quis, lobortis ipsum. Aenean sit amet lacus molestie, pretium nisi eget, sodales leo. Fusce luctus ultrices tempor.';
+    const r = Math.floor(Math.random() * 1000000 + 1);
+    const random = String(r);
+
+    this.inputValue = `${textA} +0OIl/ ${random}.\n${textB}`;
   }
 
+  copyPrivateKey() {
+    this.tooltip(this.copyPrivateTooltip);
+  }
 
+  copyPublicKey() {
+    this.tooltip(this.copyPublicTooltip);
+  }
+
+  tooltip(object: NgbTooltip) {
+    this.subject$.next(object);
+    this.subject$.subscribe((tooltip: NgbTooltip) => {
+      tooltip.open();
+    });
+    debounceTime.call(this.subject$, 1000).subscribe((tooltip) => {
+      tooltip.close();
+    });
+  }
+
+  alert(msg: string) {
+    this._alert.next(msg);
+    this._alert.subscribe((message) => { this.alertMessage = message; });
+    debounceTime.call(this._alert, 5000).subscribe(() => { this.alertMessage = null; });
+  }
 
 }
-
-
-/****
-import {config} from "../app.config";
-import {Buffer} from 'buffer/';
-import * as crypto from "crypto-browserify";
-
-export class RsaService {
-  private privateKey: string;
-  private publicKey: string;
-  private enabled: boolean;
-
-  constructor() {
-    this.privateKey = config.authentication.rsa.privateKey;
-    this.publicKey = config.authentication.rsa.publicKey;
-    this.enabled = config.authentication.rsa.enabled;
-  }
-
-  isEnabled(): boolean {
-    return this.enabled;
-  }
-
-  encrypt(plaintext: string): string {
-    if (!this.enabled)
-      return plaintext;
-
-    let buffer = new Buffer(plaintext);
-    let encrypted = crypto.privateEncrypt(this.privateKey, buffer);
-
-    return encrypted.toString('base64');
-  }
-
-  decrypt(cypher: string): string {
-    if (!this.enabled)
-      return cypher;
-
-    let buffer = Buffer.from(cypher, 'base64');
-    let plaintext = crypto.publicDecrypt(this.publicKey, buffer);
-
-    return plaintext.toString('utf8')
-  }
-}
-***********/

@@ -41,7 +41,7 @@
                     [headerHeight]="40"
                     [footerHeight]="40"
                     [rowHeight]="'auto'"
-                    [limit]="10"
+                    [limit]="5"
                     [rows]="rows"
                     (activate)="onActivate($event)">
                   </ngx-datatable>
@@ -75,7 +75,8 @@
                   [headerHeight]="40"
                   [footerHeight]="40"
                   [rowHeight]="auto"
-                  [columnMode]="'flex'"></ngx-datatable>
+                  [columnMode]="'flex'"
+                  [limit]="5"></ngx-datatable>
                 <input
                   type='text'
                   style='padding:5px;margin:15px auto;width:90%;'
@@ -89,7 +90,7 @@
           <!-- / .panel-body -->
         </div>
 
-        <div class="panel panel-default">
+        <div *ngIf="isSuperUser" class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title">Root Menu</h4>
           </div>

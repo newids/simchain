@@ -14,6 +14,7 @@
 </div>
 <!-- / desc -->
 
+<!--
 <div class="row">
   <div class="col-sm-3">
     <div class="form-group">
@@ -53,67 +54,113 @@
   <div class="col-sm-3">
     <div class="form-group">
       <label>&nbsp;</label><br>
-      <button type="reset" class="btn btn-outline-secondary" (click)="clearText()"><i class="fa fa-trash"></i> Clear</button>
+      <button type="reset" class="btn btn-outline-secondary" (click)="clearText()"><i class="fa fa-trash"></i> Clear
+      </button>
     </div>
   </div>
 </div>
-<div class="alert-dismissible">
-  <ngb-alert *ngIf="alertMessage" type="warning" (close)="alertMessage = null">{{ alertMessage }}</ngb-alert>
-</div>
-<!-- / .row -->
-<div class="form-group">
-  <label>Pass phrase</label>
-  <div class="input-group">
-    <input type="text" class="form-control" id="passphrase" name="passphrase" value="" size="70"
-           maxlength="128" [(ngModel)]="passphrase">
-    <span class="input-group-btn">
-					<button class="btn btn-outline-secondary" type="button" name="random" (click)="genPassphrase()">Random</button>
-				</span>
+-->
+
+
+<div class="card">
+  <div class="card-header text-center">Encrypt Part</div>
+  <div class="card-body">
+
+    <form>
+      <div class="form-group">
+        <label>Pass phrase</label>
+        <div class="input-group">
+          <input type="text" class="form-control" id="passphrase" name="passphrase" value="" size="70"
+                 maxlength="128" [(ngModel)]="passphrase">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-outline-secondary btn-copy"
+                    ngbTooltip="Copied!" triggers="manual" #copyTextTooltip="ngbTooltip" (cbOnSuccess)="copyText()"
+                    ngxClipboard [cbContent]="passphrase"><i class="fa fa-copy"></i> Copy Pass</button>
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Plain text</label> (length: <span id="lenPlaintext" name="lenPlaintext">{{lenPlaintext}}</span>)
+        <textarea [(ngModel)]="txtPlaintext"
+                  cols="30" rows="3" class="form-control" (keyup)="lenPlaintext = txtPlaintext.length;"
+                  id="txtPlaintext" name="txtPlaintext"></textarea>
+      </div>
+      <div class="form-group row">
+        <div class="col-sm-4">
+          <button type="button" class="btn btn-outline-secondary btn-block"
+                  ngbTooltip="Pass phrase와 평문 데이터를 임의로 만듭니다." (click)="genPassphrase()">Random Data
+          </button>
+        </div>
+        <div class="col-sm-4">
+          <button type="button" class="btn btn-primary btn-block" id="cmdEncrypt" name="cmdEncrypt"
+                  (click)="cmdEncryptClick()">Encrypt
+          </button>
+        </div>
+        <div class="col-sm-4">
+          <button type="reset" class="btn btn-outline-secondary btn-block"><i class="fa fa-trash"></i> Clear All
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Cipher text</label>
+        <textarea [(ngModel)]="txtCiphertext" cols="30" rows="3" class="form-control" id="txtCiphertext"
+                  name="txtCiphertext"
+                  readonly></textarea>
+      </div>
+    </form>
   </div>
 </div>
-<div class="form-group">
-  <label>Plain text</label> (length: <span id="lenPlaintext" name="lenPlaintext">{{lenPlaintext}}</span>)
-  <textarea [(ngModel)]="txtPlaintext"
-    cols="30" rows="3" class="form-control" onkeyup="Contar('txtPlaintext','lenPlaintext','{CHAR}',4);"
-            id="txtPlaintext" name="txtPlaintext" onfocus="if(this.value == _text) this.value = '';"
-            onblur="if(this.value == '') this.value = _text"></textarea>
-</div>
-<div class="form-group">
-  <button type="button" class="btn btn-primary" id="cmdEncrypt" name="cmdEncrypt" (click)="cmdEncryptClick()">Encrypt
-  </button>
-</div>
-<div class="form-group">
-  <label>Cipher text</label>
-  <textarea [(ngModel)]="txtCiphertext" cols="30" rows="3" class="form-control" id="txtCiphertext" name="txtCiphertext" readonly></textarea>
-</div>
-
 <!-- ////////////////////////// -->
-<hr>
+<br>
+<div class="alert-dismissible">
+  <ngb-alert *ngIf="alertMessage" type="danger" (close)="alertMessage = null">{{ alertMessage }}</ngb-alert>
+</div>
+<br>
 
-<!-- / .row -->
-<div class="form-group">
-  <label>Pass phrase</label>
-  <div class="input-group">
-    <input type="text" class="form-control" id="passphrase2" name="passphrase2" value="" type="text" size="70"
-           maxlength="128" [(ngModel)]="passphrase2">
-    <span class="input-group-btn">
-					<button class="btn btn-outline-secondary" type="button" name="random" (click)="getPassphrase()">GetPass</button>
+<div class="card">
+  <div class="card-header text-center">Decrypt Part</div>
+  <div class="card-body">
+
+    <form>
+      <div class="form-group">
+        <label>Pass phrase</label>
+        <div class="input-group">
+          <input type="text" class="form-control" id="passphrase2" name="passphrase2" value="" type="text" size="70"
+                 maxlength="128" [(ngModel)]="passphrase2">
+          <span class="input-group-btn">
+					<button class="btn btn-outline-secondary" type="button" name="random"
+                  (click)="getPassphrase()"><i class="fa fa-paste"></i> Get Pass</button>
 				</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Cipher text</label> (length: <span id="lenCiphertext" name="lenCiphertext">{{lenCiphertext}}</span>)
+        <textarea [(ngModel)]="txtCiphertext2"
+                  cols="30" rows="3" class="form-control" (keyup)="lenCiphertext = txtCiphertext2.length;"
+                  id="txtCiphertext2" name="txtCiphertext2"></textarea>
+      </div>
+      <div class="form-group row">
+        <div class="col-sm-4">
+          <button type="button" class="btn btn-outline-secondary btn-block"
+                  ngbTooltip="위의 Pass phrase와 암호화된 데이터를 복사해 옵니다." (click)="getCiphertext()"> Get Cipher Text
+          </button>
+        </div>
+        <div class="col-sm-4">
+          <button type="button" class="btn btn-primary btn-block" id="cmdVerify" name="cmdVerify"
+                  (click)="cmdDecryptClick()"> Decrypt
+          </button>
+        </div>
+        <div class="col-sm-4">
+          <button type="reset" class="btn btn-outline-secondary btn-block"><i class="fa fa-trash"></i> Clear All
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Plain text</label>
+        <textarea [(ngModel)]="txtPlaintext2"
+                  cols="30" rows="3" class="form-control" id="txtPlaintext2" name="txtPlaintext2" readonly></textarea>
+      </div>
+    </form>
   </div>
-</div>
-<div class="form-group">
-  <label>Cipher text</label> (length: <span id="lenCiphertext" name="lenCiphertext">{{lenCiphertext}}</span>)
-  <textarea [(ngModel)]="txtCiphertext2"
-            cols="30" rows="3" class="form-control" onkeyup="Contar('txtCiphertext2','lenCiphertext','{CHAR}',4);"
-            id="txtCiphertext2" name="txtCiphertext2" onfocus="if(this.value == _text) this.value = '';"
-            onblur="if(this.value == '') this.value = _text"></textarea>
-</div>
-<div class="form-group">
-  <button type="button" class="btn btn-primary" id="cmdVerify" name="cmdVerify" (click)="cmdDecryptClick()">Decrypt</button>
-	<button class="btn btn-outline-secondary -align-right" type="button" name="getCiphertext" (click)="getCiphertext()">getCiphertext</button>
-</div>
-<div class="form-group">
-  <label>Plain text</label>
-  <textarea [(ngModel)]="txtPlaintext2"
-            cols="30" rows="3" class="form-control" id="txtPlaintext2" name="txtPlaintext2" readonly></textarea>
 </div>

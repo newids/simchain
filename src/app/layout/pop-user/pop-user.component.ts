@@ -12,6 +12,7 @@ import {TxService} from '../../interface/tx.service';
   styleUrls: ['./pop-user.component.scss']
 })
 export class PopUserComponent implements OnInit {
+  isSuperUser = null;
   closeResult: string;
   @Input() node_number: string;
   email: string;
@@ -82,6 +83,7 @@ export class PopUserComponent implements OnInit {
   // }
 
   open(content, node, mail) {
+    this.isSuperUser = (node === '0000' ? 'True' : null);
     this.node_number = node;
     this.email = mail;
 

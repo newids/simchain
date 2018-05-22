@@ -13,50 +13,70 @@
   <div class="well" data-load="./load-wallet.html"></div>
 </div>
 <!-- / desc -->
-
-<div class="form-group">
-  <button type="button" class="btn btn-primary" (click)="generateKey()">Generate</button>
-</div>
-<div class="form-group">
-  <label>Private Key</label>
-  <div class="input-group">
-    <input type="text" class="form-control" name="privateKeyValue" [(ngModel)]="privateKeyValue">
-    <span class="input-group-btn">
-      <button type="button" class="btn btn-outline-secondary" (click)="pastePrivateKey()"><i class="fa fa-copy"></i> Copy</button>
-    </span>
+<div class="card">
+  <div class="card-header text-center">암호화폐 지갑을 만들고 저장합니다.</div>
+  <div class="card-body">
+    <form>
+      <div class="form-group">
+        <label>Private Key</label>
+        <div class="input-group">
+          <input type="text" class="form-control" name="privateKeyValue" readonly [(ngModel)]="privateKeyValue">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-outline-secondary btn-copy"
+                    ngbTooltip="Copied!" triggers="manual" #copyPrivateKeyTooltip="ngbTooltip"
+                    (cbOnSuccess)="copyPrivateKey()"
+                    ngxClipboard [cbContent]="privateKeyValue"><i class="fa fa-copy"></i> Copy</button>
+          </span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Public Key</label>
+        <input type="text" class="form-control" name="pubKeyKeyValue" readonly [(ngModel)]="publicKeyValue">
+      </div>
+      <div class="form-group">
+        <label>Private key (WIF format, compressed)</label>
+        <input type="text" class="form-control" name="wifCompValue" readonly [(ngModel)]="wifCompValue">
+      </div>
+      <div class="form-group">
+        <label>Private key (WIF format, uncompressed)</label>
+        <div class="input-group">
+          <input type="text" class="form-control" name="wifValue" readonly [(ngModel)]="wifValue">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-outline-secondary btn-copy"
+                    ngbTooltip="Copied!" triggers="manual" #copyWifTooltip="ngbTooltip"
+                    (cbOnSuccess)="copyWif()"
+                    ngxClipboard [cbContent]="wifValue"><i class="fa fa-copy"></i> Copy</button>
+      </span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Address</label>
+        <div class="input-group">
+          <input type="text" id="address" class="form-control" name="keyPair.address" readonly
+                 [(ngModel)]="addressValue">
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-outline-secondary btn-copy"
+                    ngbTooltip="Copied!" triggers="manual" #copyAddressTooltip="ngbTooltip"
+                    (cbOnSuccess)="copyAddress()"
+                    ngxClipboard [cbContent]="addressValue"><i class="fa fa-copy"></i> Copy</button>
+      </span>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-sm-4">
+          <button type="button" class="btn btn-primary btn-block" (click)="generateKey()">Generate</button>
+        </div>
+        <div class="col-sm-4">
+          <button type="button" class="btn btn-primary btn-block" (click)="registerKey()">Save this wallet</button>
+        </div>
+        <div class="col-sm-4">
+          <button type="reset" class="btn btn-outline-secondary btn-block"><i class="fa fa-trash"></i> Clear All
+          </button>
+        </div>
+      </div>
+    </form>
   </div>
 </div>
-<div class="form-group">
-  <label>Public Key</label>
-  <input type="text" class="form-control" name="pubKeyKeyValue" readonly [(ngModel)]="publicKeyValue">
-</div>
-<div class="form-group">
-  <label>Private key (WIF format, compressed)</label>
-  <input type="text" class="form-control" name="wifCompValue" readonly [(ngModel)]="wifCompValue">
-</div>
-<div class="form-group">
-  <label>Private key (WIF format, uncompressed)</label>
-  <div class="input-group">
-    <input type="text" class="form-control" name="wifValue" [(ngModel)]="wifValue">
-    <span class="input-group-btn">
-      <button type="button" class="btn btn-outline-secondary" (click)="pastePrivateKey()"><i class="fa fa-copy"></i> Copy</button>
-    </span>
-  </div>
-</div>
-<div class="form-group">
-  <label>Address</label>
-  <div class="input-group">
-    <input type="text" id="address" class="form-control" name="keyPair.address" readonly [(ngModel)]="addressValue">
-    <span class="input-group-btn">
-      <button type="button" class="btn btn-outline-secondary btn-copy" data-clipboard-target="#address"><i class="fa fa-copy"></i> Copy</button>
-    </span>
-  </div>
-</div>
-<div class="form-group">
-  <button type="button" class="btn btn-primary" (click)="registerKey()">Save this wallet</button>
-  <button type="button" class="btn btn-outline-secondary" (click)="clearForm()"><i class="fa fa-trash"></i> Clear</button>
-</div>
-
 <div class="alert-dismissible">
   <ngb-alert *ngIf="alertMessage" type="warning" (close)="alertMessage = null">{{ alertMessage }}</ngb-alert>
 </div>
