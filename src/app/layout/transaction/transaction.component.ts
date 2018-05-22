@@ -205,6 +205,11 @@ export class TransactionComponent implements OnInit {
     this.publicKey = key.public_key;
   }
 
+  clearAll() {
+    this.amount = 10;
+    this.tx = new Tx();
+  }
+
   changeTo(key) {
     this.to = key.address;
   }

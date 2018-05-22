@@ -130,7 +130,7 @@ export class BlockchainInfoComponent implements OnInit {
 
     // filter our data
     const temp = this.txList.filter(function (d) {
-      return d.from.toLowerCase().indexOf(val) !== -1 || !val;
+      return d.from.toLowerCase().indexOf(val) !== -1 || d.to.toLowerCase().indexOf(val) !== -1 || !val;
     });
 
     // update the rows

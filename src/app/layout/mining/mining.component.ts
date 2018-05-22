@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Block} from './block.interface';
 import {BlockService} from '../../interface/block.service';
 import {KeyService} from '../../interface/key.service';
@@ -7,6 +7,8 @@ import * as CryptoJS from 'crypto-js';
 import {debounceTime} from 'rxjs/operator/debounceTime';
 import {Subject} from 'rxjs/Subject';
 import {Router} from '@angular/router';
+import {DatatableComponent} from '@swimlane/ngx-datatable';
+import {Tx} from '../../interface/tx.interface';
 
 @Component({
   selector: 'app-mining',
@@ -34,6 +36,10 @@ export class MiningComponent implements OnInit {
     {name: 'Amount', prop: 'amount', flexGrow: 1}
   ];
   rows_tx = [];
+  txList: Tx[];
+
+  @ViewChild(DatatableComponent) table_blocks: DatatableComponent;
+  @ViewChild(DatatableComponent) table_tx: DatatableComponent;
 
   isCollapsed = false;
   collapseLabel = '숨기기';
@@ -129,6 +135,7 @@ export class MiningComponent implements OnInit {
         .then(tx => {
           this.rows_tx.push(...tx);
           this.rows_tx = [...this.rows_tx];
+          this.txList = [...this.rows_tx];
           console.log('tx: ', tx);
           console.log('this.rows_tx: ', this.rows_tx);
         })
@@ -140,6 +147,20 @@ export class MiningComponent implements OnInit {
       this.alert(`Error: ${e.toLocaleString()}`);
       console.log('Error: ', e.toLocaleString());
     }
+  }
+
+  updateFilterTx(event) {
+    const val = event.target.value.toLowerCase();
+
+    // filter our data
+    const temp = this.txList.filter(function (d) {
+      return d.from.toLowerCase().indexOf(val) !== -1 || d.to.toLowerCase().indexOf(val) !== -1 || !val;
+    });
+
+    // update the rows
+    this.rows_tx = temp;
+    // Whenever the filter changes, always go back to the first page
+    this.table_tx.offset = 0;
   }
 
   validateHash(hash: string): boolean {

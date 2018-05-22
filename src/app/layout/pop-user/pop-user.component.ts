@@ -5,6 +5,7 @@ import {KeyService} from '../../interface/key.service';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
 import {DetailviewComponent} from '../detailview/detailview.component';
 import {TxService} from '../../interface/tx.service';
+import {Tx} from '../../interface/tx.interface';
 
 @Component({
   selector: 'app-pop-user',
@@ -39,6 +40,7 @@ export class PopUserComponent implements OnInit {
     {name: 'Time', prop: 'created_date', flexGrow: 2},
   ];
   rows_tx = [];
+  txList: Tx[];
 
   detail_view_title: string;
   detail_view_content: string;
@@ -109,6 +111,7 @@ export class PopUserComponent implements OnInit {
         .then(tx => {
           this.rows_tx.push(...tx);
           this.rows_tx = [...this.rows_tx];
+          this.txList = [...this.rows_tx];
           console.log('tx: ', tx);
           console.log('this.rows_tx: ', this.rows_tx);
         })
@@ -145,16 +148,16 @@ export class PopUserComponent implements OnInit {
     this.table.offset = 0;
   }
 
-  updateFilter2(event) {
+  updateFilterTx(event) {
     const val = event.target.value.toLowerCase();
 
     // filter our data
-    const temp = this.keyList.filter(function (d) {
-      return d.address.toLowerCase().indexOf(val) !== -1 || !val;
+    const temp = this.txList.filter(function (d) {
+      return d.from.toLowerCase().indexOf(val) !== -1 || d.to.toLowerCase().indexOf(val) !== -1 || !val;
     });
 
     // update the rows
-    this.rows = temp;
+    this.rows_tx = temp;
     // Whenever the filter changes, always go back to the first page
     this.table_tx.offset = 0;
   }
