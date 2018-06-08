@@ -85,6 +85,7 @@ export class TransactionComponent implements OnInit {
     } catch (e) {
       this.verified = e.toLocaleString();
       this.alert(`Error: ${e.toLocaleString()}`);
+      console.log('Error: ', e.toLocaleString());
     }
   }
 
@@ -107,6 +108,7 @@ export class TransactionComponent implements OnInit {
     } catch (e) {
       this.verified = e.toLocaleString();
       this.alert(`Error: ${e.toLocaleString()}`);
+      console.log('Error: ', e.toLocaleString());
     }
   }
 
@@ -121,12 +123,13 @@ export class TransactionComponent implements OnInit {
           if (balance >= this.amount) {
             this.save_request();
           } else {
-            this.result = 'Balance Too Low.';
+            this.result = 'Error: Balance Too Low.';
+            this.alert(this.result);
           }
         })
         .catch(response => {
-          this.result = 'Rejected.';
-          this.alert(`Rejected: ${response.errors}`);
+          this.result = `Rejected: ${response.errors}`;
+          this.alert(this.result);
           console.log('errors: ', response.toLocaleString());
         });
     } catch (e) {
