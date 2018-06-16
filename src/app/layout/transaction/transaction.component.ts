@@ -73,13 +73,28 @@ export class TransactionComponent implements OnInit {
   }
 
   sign() {
+    let keyPair;
     try {
-      const keyPair = this.public_key_from_private_key();
+      keyPair = this.public_key_from_private_key();
 
       console.log('json : ', JSON.stringify(this.tx));
       this.sha256 = bigi.fromBuffer(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx)))).toHex();
       console.log('sha256 : ', this.sha256);
-      const ecSignature = keyPair.sign(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx))));
+    } catch (e) {
+      this.verified = e.toLocaleString();
+      this.alert(`Error: ${e.toLocaleString()}`);
+      console.log('Error: ', e.toLocaleString());
+    }
+    let ecSignature;
+    try {
+      ecSignature = keyPair.sign(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx))));
+      console.log('signature : ', ecSignature);
+    } catch (e) {
+      this.verified = e.toLocaleString();
+      this.alert(`Error: ${e.toLocaleString()}`);
+      console.log('Error: ', e.toLocaleString());
+    }
+    try {
       this.signature = bigi.fromBuffer(ecSignature.toDER()).toHex();
       console.log('signature : ', this.signature);
     } catch (e) {
