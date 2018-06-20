@@ -31,9 +31,9 @@ export class MiningComponent implements OnInit {
   result = '';
 
   columns_tx = [
-    {name: 'From', prop: 'from', flexGrow: 2},
-    {name: 'To', prop: 'to', flexGrow: 2},
-    {name: 'Amount', prop: 'amount', flexGrow: 1}
+    {name: 'From', prop: 'from', flexGrow: 4},
+    {name: 'To', prop: 'to', flexGrow: 4},
+    {name: 'Amount', prop: 'amount', flexGrow: 2}
   ];
   rows_tx = [];
   txList: Tx[];

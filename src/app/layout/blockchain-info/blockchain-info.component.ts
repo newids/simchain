@@ -24,7 +24,7 @@ export class BlockchainInfoComponent implements OnInit {
   version = '02000000';
   newBlock: Block;
   index = '';
-  address = '';
+  prev_hash = '';
   node_number = '';
   timestamp: number;
   nonce = 0;
@@ -34,8 +34,8 @@ export class BlockchainInfoComponent implements OnInit {
   columns_blocks = [
     {name: 'Height', prop: 'height', flexGrow: 1},
     {name: 'Time', prop: 'created_date', pipe: new DateOnlyPipe('en-US'), flexGrow: 2},
-    {name: 'Relayed', prop: 'node_number', flexGrow: 2},
-    {name: 'Address', prop: 'address', flexGrow: 5},
+    {name: 'Relayed', prop: 'node_number', flexGrow: 1},
+    {name: 'prev_hash', prop: 'prev_hash', flexGrow: 6},
   ];
   rows_blocks = [];
   blockList: Block[];
@@ -116,7 +116,7 @@ export class BlockchainInfoComponent implements OnInit {
 
     // filter our data
     const temp = this.blockList.filter(function (d) {
-      return d.address.toLowerCase().indexOf(val) !== -1 || !val;
+      return d.prev_hash.toLowerCase().indexOf(val) !== -1 || !val;
     });
 
     // update the rows
