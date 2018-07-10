@@ -74,27 +74,21 @@ export class TransactionComponent implements OnInit {
 
   sign() {
     let keyPair: bitcoin.ECPair;
-    try {
-      keyPair = this.public_key_from_private_key();
-
-      console.log('json : ', JSON.stringify(this.tx));
-      this.sha256 = bigi.fromBuffer(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx)))).toHex();
-      console.log('sha256 : ', this.sha256);
-    } catch (e) {
-      this.verified = e.toLocaleString();
-      this.alert(`Error: ${e.toLocaleString()}`);
-      console.log('Error: ', e.toLocaleString());
-    }
+    let theHash: Buffer;
     let ecSignature: ECSignature;
     try {
-      ecSignature = keyPair.sign(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx))));
+      keyPair = this.public_key_from_private_key();
+      console.log('json : ', JSON.stringify(this.tx));
+
+      theHash = bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx)));
+      console.log('hash : ', theHash);
+
+      this.sha256 = bigi.fromBuffer(theHash).toHex();
+      console.log('sha256 : ', this.sha256);
+
+      ecSignature = keyPair.sign(theHash);
       console.log('signature : ', ecSignature);
-    } catch (e) {
-      this.verified = e.toLocaleString();
-      this.alert(`Error: ${e.toLocaleString()}`);
-      console.log('Error: ', e.toLocaleString());
-    }
-    try {
+
       this.signature = bigi.fromBuffer(ecSignature.toDER()).toHex();
       console.log('signature : ', this.signature);
     } catch (e) {
