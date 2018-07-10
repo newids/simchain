@@ -73,7 +73,7 @@ export class TransactionComponent implements OnInit {
   }
 
   sign() {
-    let keyPair;
+    let keyPair: bitcoin.ECPair;
     try {
       keyPair = this.public_key_from_private_key();
 
@@ -85,7 +85,7 @@ export class TransactionComponent implements OnInit {
       this.alert(`Error: ${e.toLocaleString()}`);
       console.log('Error: ', e.toLocaleString());
     }
-    let ecSignature;
+    let ecSignature: ECSignature;
     try {
       ecSignature = keyPair.sign(bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx))));
       console.log('signature : ', ecSignature);
