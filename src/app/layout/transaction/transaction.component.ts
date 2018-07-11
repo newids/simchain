@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {Tx} from '../../interface/tx.interface';
-import * as bitcoin from 'bitcoinjs-lib';
+// import * as bitcoin from 'bitcoinjs-lib';
 import * as bigi from 'bigi';
 import * as secp256k1 from 'secp256k1';
 import {KeyService} from '../../interface/key.service';
 import {Key} from '../../interface/key.interface';
 import {Network} from 'bitcoinjs-lib';
-import {ECSignature} from 'bitcoinjs-lib';
+import {ECSignature, ECPair, crypto, networks} from 'bitcoinjs-lib';
 import {TxService} from '../../interface/tx.service';
 import {debounceTime} from 'rxjs/operator/debounceTime';
 import {Subject} from 'rxjs/Subject';
@@ -73,14 +73,14 @@ export class TransactionComponent implements OnInit {
   }
 
   sign() {
-    let keyPair: bitcoin.ECPair;
+    let keyPair: ECPair;
     let theHash: Buffer;
     let ecSignature: ECSignature;
     try {
       keyPair = this.public_key_from_private_key();
       console.log('json : ', JSON.stringify(this.tx));
 
-      theHash = bitcoin.crypto.sha256(Buffer.from(JSON.stringify(this.tx)));
+      theHash = crypto.sha256(Buffer.from(JSON.stringify(this.tx)));
       console.log('hash : ', theHash);
 
       this.sha256 = bigi.fromBuffer(theHash).toHex();
@@ -100,7 +100,7 @@ export class TransactionComponent implements OnInit {
 
   verify() {
     try {
-      const testKeyPair = bitcoin.ECPair.fromPublicKeyBuffer(Buffer.from(this.publicKey, 'hex'), bitcoin.networks.bitcoin);
+      const testKeyPair = ECPair.fromPublicKeyBuffer(Buffer.from(this.publicKey, 'hex'), networks.bitcoin);
       console.log('test public_key: ', this.keyList[0].public_key);
       console.log('gen public_key: ', bigi.fromBuffer(testKeyPair.getPublicKeyBuffer()).toHex());
       console.log('test private_key: ', this.keyList[0].private_key);
@@ -110,7 +110,7 @@ export class TransactionComponent implements OnInit {
       // bitcoin.ECSignature.fromDER(Buffer.from(this.signature)));
 
       const hash = Buffer.from(this.sha256, 'hex');
-      const signature = bitcoin.ECSignature.fromDER(Buffer.from(this.signature, 'hex'));
+      const signature = ECSignature.fromDER(Buffer.from(this.signature, 'hex'));
       const isVerified = testKeyPair.verify(hash, signature);
 
       this.verified = isVerified.toLocaleString();
@@ -183,7 +183,7 @@ export class TransactionComponent implements OnInit {
           this.from = this.keyList[0].address;
           this.privateKey = this.keyList[0].private_key;
           this.publicKey = this.keyList[0].public_key;
-          this.keyPair = bitcoin.ECPair.fromWIF(this.keyList[0].wif, bitcoin.networks.bitcoin);
+          this.keyPair = ECPair.fromWIF(this.keyList[0].wif, networks.bitcoin);
         }
         if (this.keyList.length > 1) {
           this.to = this.keyList[1].address;
@@ -191,14 +191,14 @@ export class TransactionComponent implements OnInit {
       });
   }
 
-  public_key_from_private_key(): bitcoin.ECPair {
+  public_key_from_private_key(): ECPair {
     // http://procbits.com/2013/08/27/generating-a-bitcoin-address-with-javascript
     // https://github.com/cryptocoinjs/secp256k1-node
 
     const pubKey = secp256k1.publicKeyCreate(Buffer.from(this.privateKey, 'hex'));
 
-    const keyPairFromPrivateKey = new bitcoin.ECPair(bigi.fromBuffer(Buffer.from(this.privateKey, 'hex')), null,
-      {compressed: true, network: bitcoin.networks.bitcoin});
+    const keyPairFromPrivateKey = new ECPair(bigi.fromBuffer(Buffer.from(this.privateKey, 'hex')), null,
+      {compressed: true, network: networks.bitcoin});
 
     console.log('this.private_key : ', this.privateKey);
     console.log('this.public_key : ', this.publicKey);
