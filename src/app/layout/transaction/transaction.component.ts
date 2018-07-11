@@ -1,11 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Tx} from '../../interface/tx.interface';
-// import * as bitcoin from 'bitcoinjs-lib';
-import * as bigi from 'bigi';
 import * as secp256k1 from 'secp256k1';
 import {KeyService} from '../../interface/key.service';
 import {Key} from '../../interface/key.interface';
-import {Network} from 'bitcoinjs-lib';
+import BigInteger = require('bigi');
 import {ECSignature, ECPair, crypto, networks} from 'bitcoinjs-lib';
 import {TxService} from '../../interface/tx.service';
 import {debounceTime} from 'rxjs/operator/debounceTime';
@@ -83,13 +81,13 @@ export class TransactionComponent implements OnInit {
       theHash = crypto.sha256(Buffer.from(JSON.stringify(this.tx)));
       console.log('hash : ', theHash);
 
-      this.sha256 = bigi.fromBuffer(theHash).toHex();
+      this.sha256 = BigInteger.fromBuffer(theHash).toHex();
       console.log('sha256 : ', this.sha256);
 
       ecSignature = keyPair.sign(theHash);
       console.log('signature : ', ecSignature);
 
-      this.signature = bigi.fromBuffer(ecSignature.toDER()).toHex();
+      this.signature = BigInteger.fromBuffer(ecSignature.toDER()).toHex();
       console.log('signature : ', this.signature);
     } catch (e) {
       this.verified = e.toLocaleString();
@@ -102,7 +100,7 @@ export class TransactionComponent implements OnInit {
     try {
       const testKeyPair = ECPair.fromPublicKeyBuffer(Buffer.from(this.publicKey, 'hex'), networks.bitcoin);
       console.log('test public_key: ', this.keyList[0].public_key);
-      console.log('gen public_key: ', bigi.fromBuffer(testKeyPair.getPublicKeyBuffer()).toHex());
+      console.log('gen public_key: ', BigInteger.fromBuffer(testKeyPair.getPublicKeyBuffer()).toHex());
       console.log('test private_key: ', this.keyList[0].private_key);
       // console.log('gen private_key: ', testKeyPair.d.toHex()); -------> ERROR TypeError: Cannot read property 'toHex' of undefined
 
@@ -197,16 +195,16 @@ export class TransactionComponent implements OnInit {
 
     const pubKey = secp256k1.publicKeyCreate(Buffer.from(this.privateKey, 'hex'));
 
-    const keyPairFromPrivateKey = new ECPair(bigi.fromBuffer(Buffer.from(this.privateKey, 'hex')), null,
+    const keyPairFromPrivateKey = new ECPair(BigInteger.fromBuffer(Buffer.from(this.privateKey, 'hex')), null,
       {compressed: true, network: networks.bitcoin});
 
     console.log('this.private_key : ', this.privateKey);
     console.log('this.public_key : ', this.publicKey);
 
-    console.log('created pubKey : ', bigi.fromBuffer(pubKey).toHex());
+    console.log('created pubKey : ', BigInteger.fromBuffer(pubKey).toHex());
 
     console.log('keypair.privKey : ', keyPairFromPrivateKey.d.toHex());
-    console.log('keypair.pubKey : ', bigi.fromBuffer(keyPairFromPrivateKey.getPublicKeyBuffer()).toHex());
+    console.log('keypair.pubKey : ', BigInteger.fromBuffer(keyPairFromPrivateKey.getPublicKeyBuffer()).toHex());
 
     return keyPairFromPrivateKey;
   }
