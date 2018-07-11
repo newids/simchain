@@ -10,7 +10,7 @@ import {Subject} from 'rxjs/Subject';
 import * as secp256k1 from 'secp256k1';
 import * as bigi from 'bigi';
 
-import BigInteger = require('bigi');
+// import BigInteger = require('bigi');
 
 @Component({
   selector: 'app-transaction',
