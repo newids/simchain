@@ -138,7 +138,7 @@ export class TransactionComponent implements OnInit {
           }
         })
         .catch(response => {
-          this.result = `Rejected: ${response.errors}`;
+          this.result = `Rejected: ${response.toLocaleString()}`;
           this.alert(this.result);
           console.log('errors: ', response.toLocaleString());
         });

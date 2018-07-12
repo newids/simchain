@@ -3,6 +3,7 @@ import * as bigi from 'bigi';
 import {Subject} from 'rxjs/Subject';
 import {debounceTime} from 'rxjs/operator/debounceTime';
 import {NgbTooltip} from '@ng-bootstrap/ng-bootstrap';
+import * as NodeRSA from 'node-rsa';
 
 //  library : https://www.npmjs.com/package/node-rsa
 //  package.json 수정 : https://stackoverflow.com/questions/47486774/crypto-randombytes-is-not-a-function-in-angular
@@ -39,7 +40,7 @@ export class PublicKeyComponent implements OnInit {
 
   newPrivateKey() {
     try {
-      const NodeRSA = require('node-rsa');
+      // const NodeRSA = require('node-rsa');
       this.rsaKeyPair = new NodeRSA({b: 512});
       const privateKey = this.rsaKeyPair.exportKey('pkcs1-der');
       const publicKey = this.rsaKeyPair.exportKey('pkcs8-public-der');
