@@ -42,10 +42,15 @@ export class PublicKeyComponent implements OnInit {
     try {
       // const NodeRSA = require('node-rsa');
       this.rsaKeyPair = new NodeRSA({b: 512});
+      console.log('rsaKeyPair:', this.rsaKeyPair.toString());
+
       const privateKey = this.rsaKeyPair.exportKey('pkcs1-der');
-      const publicKey = this.rsaKeyPair.exportKey('pkcs8-public-der');
       this.privatekeyValue = this.privatekeyValue = bigi.fromBuffer(privateKey).toHex();
+      console.log('privatekeyValue:', this.privatekeyValue);
+
+      const publicKey = this.rsaKeyPair.exportKey('pkcs8-public-der');
       this.publickeyValue = this.publickeyValue = bigi.fromBuffer(publicKey).toHex();
+      console.log('publickeyValue:', this.publickeyValue);
     } catch (e) {
       console.log('error:', e.toLocaleString());
       this.alert(`Error: ${e.toLocaleString()}`);
